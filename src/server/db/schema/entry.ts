@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { sql, relations } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 import { user } from './user'
 import { division } from './division'
@@ -89,3 +89,44 @@ export const entryToEvent = createTable(
     }
   },
 )
+
+// relations
+//
+export const entryRelations = relations(entry, ({ one, many }) => ({
+  user: one(user, {
+    fields: [entry.userId],
+    references: [user.id],
+  }),
+  competition: one(competition, {
+    fields: [entry.competitionId],
+    references: [competition.id],
+  }),
+  entryToDivisions: many(entryToDivision),
+  // lift: many(lift),
+  entryToEvents: many(entryToEvent),
+}))
+
+export const entryToDivisionRelations = relations(
+  entryToDivision,
+  ({ one }) => ({
+    entry: one(entry, {
+      fields: [entryToDivision.entryId],
+      references: [entry.id],
+    }),
+    division: one(division, {
+      fields: [entryToDivision.divisionId],
+      references: [division.id],
+    }),
+  }),
+)
+
+export const entryToEventRelations = relations(entryToEvent, ({ one }) => ({
+  entry: one(entry, {
+    fields: [entryToEvent.entryId],
+    references: [entry.id],
+  }),
+  event: one(event, {
+    fields: [entryToEvent.eventId],
+    references: [event.id],
+  }),
+}))
