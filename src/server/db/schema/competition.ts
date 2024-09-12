@@ -15,6 +15,9 @@ export const competition = createTable('competition', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
+  competitionStateId: int('competition_state_id', {
+    mode: 'number',
+  }).references(() => competitionState.id),
   prettyId: text('pretty_id'),
   ownerId: int('owner_id', { mode: 'number' }).references(() => user.id),
   name: text('name'),
@@ -44,6 +47,44 @@ export const competition = createTable('competition', {
   notes: text('notes'),
 })
 
+export const judge = createTable('judge', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  competitionId: int('competition_id', { mode: 'number' }).references(
+    () => competition.id,
+    {
+      onDelete: 'cascade',
+    },
+  ),
+  userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+    onDelete: 'cascade',
+  }),
+  role: text('role'),
+})
+
+export const competitionState = createTable('competition_state', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  competitionId: int('competition_id', { mode: 'number' }),
+  day: int('day'),
+  bracket: int('bracket'),
+  round: int('round'),
+  liftName: text('lift_name'),
+  currentLifter: int('current_lifter'),
+  nextLifter: int('next_lifter'),
+  state: text('state'),
+})
+
 export const competitionRelations = relations(competition, ({ one, many }) => ({
   entries: many(entry),
   divisions: many(division),
@@ -51,6 +92,20 @@ export const competitionRelations = relations(competition, ({ one, many }) => ({
     fields: [competition.ownerId],
     references: [user.id],
   }),
-  judges: many(user),
+  // judges: many(user),
   events: many(event),
+  competitionState: one(competitionState, {
+    fields: [competition.competitionStateId],
+    references: [competitionState.id],
+  }),
 }))
+
+export const competitionStateRelations = relations(
+  competitionState,
+  ({ one }) => ({
+    competition: one(competition, {
+      fields: [competitionState.competitionId],
+      references: [competition.id],
+    }),
+  }),
+)
