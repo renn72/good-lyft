@@ -44,6 +44,7 @@ export const lift = createTable(
     return {
       competitionidIdx: index('lift_competitionid_idx').on(e.competitionId),
       entryidIdx: index('lift_entryid_idx').on(e.entryId),
+      userIdIndex: index('lift_user_id_idx').on(e.userId),
     }
   },
 )

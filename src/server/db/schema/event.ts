@@ -21,7 +21,11 @@ export const event = createTable('event', {
       onDelete: 'cascade',
     },
   ),
-})
+},
+  (e) => ({
+    competitionIdIndex: index('event_competition_id_idx').on(e.competitionId)
+  }),
+)
 
 export const eventRelations = relations(event, ({ one, many }) => ({
   competition: one(competition, {

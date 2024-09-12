@@ -45,7 +45,12 @@ export const competition = createTable('competition', {
   isRequireAddress: int('is_require_address', { mode: 'boolean' }),
   isRequirePhone: int('is_require_phone', { mode: 'boolean' }),
   notes: text('notes'),
-})
+},
+  (c) => ({
+    competitionStateIdIndex: index('competition_state_id_idx').on(c.competitionStateId),
+    ownerIdIndex: index('competition_owner_id_idx').on(c.ownerId),
+  }),
+)
 
 export const judge = createTable('judge', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -65,7 +70,12 @@ export const judge = createTable('judge', {
     onDelete: 'cascade',
   }),
   role: text('role'),
-})
+},
+  (j) => ({
+    competitionIdIndex: index('judge_competition_id_idx').on(j.competitionId),
+    userIdIndex: index('judge_user_id_idx').on(j.userId),
+  }),
+)
 
 export const competitionState = createTable('competition_state', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -83,7 +93,11 @@ export const competitionState = createTable('competition_state', {
   currentLifter: int('current_lifter'),
   nextLifter: int('next_lifter'),
   state: text('state'),
-})
+},
+  (s) => ({
+    competitionIdIndex: index('competition_state_competition_id_idx').on(s.competitionId),
+  }),
+)
 
 export const competitionRelations = relations(competition, ({ one, many }) => ({
   entries: many(entry),
@@ -92,7 +106,7 @@ export const competitionRelations = relations(competition, ({ one, many }) => ({
     fields: [competition.ownerId],
     references: [user.id],
   }),
-  // judges: many(user),
+  judges: many(judge),
   events: many(event),
   competitionState: one(competitionState, {
     fields: [competition.competitionStateId],
@@ -109,3 +123,15 @@ export const competitionStateRelations = relations(
     }),
   }),
 )
+
+export const judgeRelations = relations(judge, ({ one, many }) => ({
+  competition: one(competition, {
+    fields: [judge.competitionId],
+    references: [competition.id],
+  }),
+  user: one(user, {
+    fields: [judge.userId],
+    references: [user.id],
+  }),
+}))
+
