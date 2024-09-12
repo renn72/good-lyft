@@ -47,3 +47,18 @@ export const lift = createTable(
     }
   },
 )
+
+export const liftRelations = relations(lift, ({ one, many }) => ({
+  entry: one(entry, {
+    fields: [lift.entryId],
+    references: [entry.id],
+  }),
+  user: one(user, {
+    fields: [lift.userId],
+    references: [user.id],
+  }),
+  competition: one(competition, {
+    fields: [lift.competitionId],
+    references: [competition.id],
+  }),
+}))

@@ -1,6 +1,7 @@
-import { sql } from 'drizzle-orm'
+import { sql, relations } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 import { competition } from './competition'
+import { entryToDivision } from './entry'
 
 export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
 
@@ -20,3 +21,11 @@ export const division = createTable('division', {
     },
   ),
 })
+
+export const divisionRelations = relations(division, ({ one, many }) => ({
+  competition: one(competition, {
+    fields: [division.competitionId],
+    references: [competition.id],
+  }),
+  entryToDivisions: many(entryToDivision),
+}))

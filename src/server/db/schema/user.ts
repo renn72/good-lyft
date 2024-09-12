@@ -1,5 +1,8 @@
-import { sql } from 'drizzle-orm'
+import { sql, relations } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { entry } from './entry'
+import { competition } from './competition'
+import { lift } from './lift'
 
 export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
 
@@ -25,7 +28,13 @@ export const user = createTable(
       () => new Date(),
     ),
   },
-  (example) => ({
-    nameIndex: index('name_idx').on(example.name),
+  (u) => ({
+    nameIndex: index('name_idx').on(u.name),
   }),
 )
+
+export const userRelations = relations(user, ({ one, many }) => ({
+  entries: many(entry),
+  competitions: many(competition),
+  lifts: many(lift),
+}))
