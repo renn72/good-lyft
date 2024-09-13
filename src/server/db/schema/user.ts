@@ -4,6 +4,7 @@ import { entry } from './entry'
 import { competition } from './competition'
 import { lift } from './lift'
 import { judge } from './competition'
+import { notification } from './notification'
 
 export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
 
@@ -40,4 +41,5 @@ export const userRelations = relations(user, ({ one, many }) => ({
   competitions: many(competition),
   lifts: many(lift),
   judges: many(judge),
+  notifications: many(notification),
 }))

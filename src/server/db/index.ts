@@ -8,6 +8,7 @@ import * as entry from './schema/entry'
 import * as division from './schema/division'
 import * as event from './schema/event'
 import * as lift from './schema/lift'
+import * as notification from './schema/notification'
 
 const schema = {
   ...user,
@@ -16,6 +17,7 @@ const schema = {
   ...division,
   ...event,
   ...lift,
+  ...notification,
 }
 
 /**
@@ -32,7 +34,6 @@ export const client =
   createClient({
     url: env.DATABASE_URL,
     syncUrl: env.DATABASE_SYNC_URL,
-    // url: env.DATABASE_SYNC_URL,
     authToken: env.DATABASE_AUTH_TOKEN,
   })
 if (env.NODE_ENV !== 'production') globalForDb.client = client

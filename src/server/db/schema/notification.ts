@@ -1,0 +1,48 @@
+import { sql, relations } from 'drizzle-orm'
+import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { user } from './user'
+import { competition } from './competition'
+
+export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
+
+export const notification = createTable(
+  'notification',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    competitionId: int('competition_id', { mode: 'number' }).references(
+      () => competition.id,
+      {
+        onDelete: 'cascade',
+      },
+    ),
+    userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+      onDelete: 'cascade',
+    }),
+    title: text('title'),
+    description: text('description'),
+    isRead: int('is_read', { mode: 'boolean' }),
+    isViewed: int('is_viewed', { mode: 'boolean' }),
+    isDeleted: int('is_deleted', { mode: 'boolean' }),
+    notes: text('notes'),
+  },
+  (e) => {
+    return {
+      competitionidIdx: index('lift_competitionid_idx').on(e.competitionId),
+      userIdIndex: index('lift_user_id_idx').on(e.userId),
+    }
+  },
+)
+
+export const notificationRelations = relations(notification, ({ one, many }) => ({
+  competition: one(competition, {
+    fields: [notification.competitionId],
+    references: [competition.id],
+  }),
+  user: one(user, {
+    fields: [notification.userId],
+    references: [user.id],
+  }),
+}))
