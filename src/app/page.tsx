@@ -29,7 +29,7 @@ export default function Home() {
               </div>
               <div className='space-x-4'>
                 <Link
-                  href='#'
+                  href='/admin'
                   passHref
                 >
                   <Button>Get Started for Free</Button>

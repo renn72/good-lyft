@@ -1,5 +1,5 @@
 import '@/styles/globals.css'
-
+import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Epilogue, Manrope } from 'next/font/google'
 import { type Metadata } from 'next'
 
@@ -22,7 +22,14 @@ export default function RootLayout({
       className={`${font.className}`}
     >
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
