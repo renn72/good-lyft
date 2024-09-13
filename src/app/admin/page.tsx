@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -42,7 +43,7 @@ export default function PowerliftingDashboard() {
         {/* Sidebar */}
         <TabsList className='hidden h-full w-64 flex-col justify-start space-y-2 bg-white p-4 dark:bg-gray-800 md:flex'>
           <div className='mb-4 text-2xl font-bold text-gray-800 dark:text-white'>
-            Powerlifting
+            Dashboard
           </div>
           {tabs.map((tab) => (
             <TabsTrigger
@@ -97,21 +98,36 @@ export default function PowerliftingDashboard() {
               </svg>
               <span className='sr-only'>Open menu</span>
             </Button>
-            <div className='flex items-center'>
-              <Select>
-                <SelectTrigger className='w-[280px]'>
-                  <SelectValue placeholder='Select Competition' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='comp1'>
-                    2023 National Powerlifting Championship
-                  </SelectItem>
-                  <SelectItem value='comp2'>
-                    Regional Qualifier Series
-                  </SelectItem>
-                  <SelectItem value='comp3'>University Invitational</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className='flex w-full items-center justify-between'>
+              <div className='flex items-center gap-4'>
+                <Select>
+                  <SelectTrigger className='w-[280px]'>
+                    <SelectValue placeholder='Select Competition' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='comp1'>
+                      2023 National Powerlifting Championship
+                    </SelectItem>
+                    <SelectItem value='comp2'>
+                      Regional Qualifier Series
+                    </SelectItem>
+                    <SelectItem value='comp3'>
+                      University Invitational
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Link
+                  href='/admin/create'
+                  passHref
+                >
+                  <Button
+                    variant='ghost'
+                    className='ml-4'
+                  >
+                    Create Competition
+                  </Button>
+                </Link>
+              </div>
               <Button
                 variant='ghost'
                 size='icon'
