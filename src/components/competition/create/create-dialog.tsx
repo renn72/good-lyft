@@ -130,7 +130,7 @@ export const CreateCompetition = () => {
       divisions: [...ageDivisionsData],
       wc_male: [...wcMData],
       wc_female: [...wcFData],
-      wc_mix: [...wcMData],
+      wc_mix: [],
     },
   })
 
