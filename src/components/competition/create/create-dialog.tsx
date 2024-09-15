@@ -611,7 +611,7 @@ export const CreateCompetition = () => {
           <WC_Field
             form={form}
             label='Mixed Weight Classes'
-            data={wcMData}
+            data={[]}
             name='wc_mix'
           />
 
