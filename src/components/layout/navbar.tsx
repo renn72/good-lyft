@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { ModeToggle } from '@/components/layout/mode-toggle'
+import { UserButton } from '@/components/layout/user-button'
 
 export const Navbar = () => {
   return (
@@ -15,6 +16,7 @@ export const Navbar = () => {
       </div>
       <div className='flex items-center gap-4'>
         <ModeToggle />
+        <UserButton />
       </div>
     </div>
   )

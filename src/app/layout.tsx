@@ -2,8 +2,12 @@ import '@/styles/globals.css'
 import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Epilogue, Manrope } from 'next/font/google'
 import { type Metadata } from 'next'
-
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
 import { TRPCReactProvider } from '@/trpc/react'
+
+import { Navbar } from '@/components/layout/navbar'
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -17,20 +21,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang='en'
-      className={`${font.className}`}
-    >
-      <body>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='light'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang='en'
+        className={`${font.className}`}
+        suppressHydrationWarning
+      >
+        <body>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='light'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TRPCReactProvider>
+              <Navbar />
+              {children}
+            </TRPCReactProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
