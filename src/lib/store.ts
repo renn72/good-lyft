@@ -4,16 +4,16 @@ export const ageDivisionsData: Array<{
   name: string
   minAge: number | string
   maxAge: number | string
-  info: string
+  notes: string
 }> = [
-  { name: 'Open', minAge: '', maxAge: '', info: 'Open' },
-  { name: 'Teen', minAge: 13, maxAge: 19, info: 'Teen' },
-  { name: 'Master', minAge: 50, maxAge: '', info: 'Masters' },
+  { name: 'Open', minAge: '', maxAge: '', notes: 'Open' },
+  { name: 'Teen', minAge: 13, maxAge: 19, notes: 'Teen' },
+  { name: 'Master', minAge: 50, maxAge: '', notes: 'Masters' },
   {
     name: 'First Timers',
     minAge: '',
     maxAge: '',
-    info: 'First powerlifting event',
+    notes: 'First powerlifting event',
   },
 ]
 

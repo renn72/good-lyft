@@ -5,7 +5,6 @@ import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
 
 import { competition, competitionState } from '~/server/db/schema/competition'
 import { division } from '~/server/db/schema/division'
-import { entry } from '~/server/db/schema/entry'
 import { event } from '~/server/db/schema/event'
 
 import { getCurrentUser } from './user'
@@ -18,21 +17,21 @@ function isTuple<T>(array: T[]): array is [T, ...T[]] {
 
 const createSchema = z.object({
   name: z.string().min(2),
-  creatorId: z.number(),
   federation: z.string(),
   country: z.string().optional(),
   state: z.string().optional(),
   city: z.string().optional(),
   date: z.date(),
+  ownerId: z.number().optional(),
   daysOfCompetition: z.number().nonnegative().int().min(1),
   platforms: z.number().nonnegative().int().min(1),
   rules: z.string().optional(),
   notes: z.string(),
-  events: z.string(),
+  events: z.array(z.string()),
   equipment: z.string(),
   formular: z.string(),
   wc_male: z.string().optional(),
-  currentState: z.string(),
+  currentState: z.string().optional(),
   competitorLimit: z.number().nonnegative().int().optional(),
   venue: z.string().optional(),
   divisions: z
@@ -63,6 +62,14 @@ export const competitionRouter = createTRPCRouter({
   create: publicProcedure
     .input(createSchema)
     .mutation(async ({ ctx, input }) => {
+      const user = await getCurrentUser()
+      if (!user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You are not authorized to access this resource.',
+        })
+      }
+      input.ownerId = user.id
       console.log('input', input)
 
       let comp_id =
@@ -101,7 +108,7 @@ export const competitionRouter = createTRPCRouter({
           }),
       )
 
-      const insEvent = input.events.split('/').map((e) => {
+      const insEvent = input.events.map((e) => {
         if (e.toLowerCase() === 'squat only') {
           return ctx.db.insert(event).values({
             name: 'Squat only',

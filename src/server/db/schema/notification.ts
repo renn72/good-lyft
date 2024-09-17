@@ -30,8 +30,8 @@ export const notification = createTable(
   },
   (e) => {
     return {
-      competitionidIdx: index('lift_competitionid_idx').on(e.competitionId),
-      userIdIndex: index('lift_user_id_idx').on(e.userId),
+      competitionidIdx: index('notification_competitionid_idx').on(e.competitionId),
+      userIdIndex: index('notification_user_id_idx').on(e.userId),
     }
   },
 )

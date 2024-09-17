@@ -1,35 +1,20 @@
 'use client'
 import { useState } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 
-import { api } from '~/trpc/react'
-
-import { CalendarIcon, PlusCircle, XCircle } from 'lucide-react'
+import { PlusCircle, XCircle } from 'lucide-react'
 import { cn } from '~/lib/utils'
-import { Calendar } from '~/components/ui/calendar'
 
-import { format } from 'date-fns'
-import { toast } from 'sonner'
 import { Card, CardContent, CardHeader } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '~/components/ui/popover'
-import { Textarea } from '~/components/ui/textarea'
-import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import {
   Dialog,
   DialogContent,
@@ -38,59 +23,11 @@ import {
   DialogTrigger,
   DialogClose,
 } from '~/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select'
-
-import {
-  ageDivisionsData,
-  eventsData,
-  wcFData,
-  wcMData,
-  equipmentData,
-  winnerFormular,
-} from '~/lib/store'
 
 import type { UseFormReturn } from 'react-hook-form'
+import { formSchema } from '~/components/competition/create/create-dialog'
 
 export const dynamic = 'force-dynamic'
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
-  }),
-  federation: z.string(),
-  country: z.string(),
-  state: z.string(),
-  city: z.string(),
-  date: z.date(),
-  daysOfCompetition: z.number().nonnegative().int().min(1),
-  platforms: z.number().nonnegative().int().min(1),
-  rules: z.string(),
-  notes: z.string(),
-  events: z.array(z.string()).nonempty({
-    message: 'Please select at least one event.',
-  }),
-  equipment: z.array(z.string()),
-  formular: z.string(),
-  wc_male: z.array(z.number().positive().or(z.string())),
-  divisions: z
-    .array(
-      z.object({
-        name: z.string(),
-        minAge: z.number().positive().or(z.string()),
-        maxAge: z.number().positive().or(z.string()),
-        info: z.string(),
-      }),
-    )
-    .nonempty({ message: 'Please add at least one division.' }),
-  wc_female: z.array(z.number().positive().or(z.string())),
-  wc_mix: z.array(z.number().positive().or(z.string())),
-})
 
 export const WC_Field = ({
   form,

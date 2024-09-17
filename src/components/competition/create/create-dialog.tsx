@@ -1,7 +1,6 @@
 'use client'
-import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, } from 'react-hook-form'
 import { z } from 'zod'
 
 import { api } from '~/trpc/react'
@@ -31,14 +30,6 @@ import {
 import { Textarea } from '~/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTrigger,
-  DialogClose,
-} from '~/components/ui/dialog'
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -57,11 +48,9 @@ import {
 
 import { WC_Field } from '~/components/competition/create/components/wc-field'
 
-import type { UseFormReturn } from 'react-hook-form'
-
 export const dynamic = 'force-dynamic'
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
@@ -86,7 +75,7 @@ const formSchema = z.object({
         name: z.string(),
         minAge: z.number().positive().or(z.string()),
         maxAge: z.number().positive().or(z.string()),
-        info: z.string(),
+        notes: z.string(),
       }),
     )
     .nonempty({ message: 'Please add at least one division.' }),
@@ -97,19 +86,19 @@ const formSchema = z.object({
 export const CreateCompetition = () => {
   const context = api.useUtils()
 
-  // const { mutate: createComp } = api.competition.create.useMutation({
-  //   onSettled: () => {
-  //     context.competition.invalidate()
-  //   },
-  //   onSuccess: () => {
-  //     toast.success('Competition Created')
-  //   },
-  //   onError: () => {
-  //     toast.error('Error Creating Competition')
-  //   },
-  // })
+  const { mutate: createComp } = api.competition.create.useMutation({
+    onSettled: () => {
+      context.competition.invalidate()
+    },
+    onSuccess: () => {
+      toast.success('Competition Created')
+    },
+    onError: () => {
+      toast.error('Error Creating Competition')
+    },
+  })
 
-  // const { data: user } = api.user.getCurrentUser.useQuery()
+  const { data: user } = api.user.getCurrentUser.useQuery()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -137,6 +126,27 @@ export const CreateCompetition = () => {
   // 2. Define a submit handler.
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data)
+    const input = {
+      name: data.name,
+      federation: data.federation,
+      country: data.country,
+      state: data.state,
+      city: data.city,
+      date: data.date,
+      daysOfCompetition: data.daysOfCompetition,
+      platforms: data.platforms,
+      rules: data.rules,
+      notes: data.notes,
+      events: data.events,
+      currentState: 'created',
+      equipment: data.equipment.map((item) => item.toString()).join('/'),
+      formular: data.formular,
+      wc_male: data.wc_male.map((item) => item.toString()).join('/'),
+      divisions: data.divisions,
+      wc_female: data.wc_female.map((item) => item.toString()).join('/'),
+      wc_mix: data.wc_mix.map((item) => item.toString()).join('/'),
+    }
+    createComp(input)
   }
 
   return (
@@ -548,12 +558,12 @@ export const CreateCompetition = () => {
                           />
                           <FormField
                             control={form.control}
-                            name={`divisions.${index}.info`}
+                            name={`divisions.${index}.notes`}
                             render={({ field }) => (
                               <FormItem className='col-span-4'>
                                 <FormControl>
                                   <Input
-                                    placeholder='info'
+                                    placeholder='notes'
                                     type='text'
                                     {...field}
                                   />
