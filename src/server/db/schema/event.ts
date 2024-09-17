@@ -14,6 +14,7 @@ export const event = createTable('event', {
   isSquat: int('is_squat', { mode: 'boolean' }),
   isDeadlift: int('is_deadlift', { mode: 'boolean' }),
   isBench: int('is_bench', { mode: 'boolean' }),
+  otherLifts: text('other_lifts'),
   notes: text('notes'),
   competitionId: int('competition_id', { mode: 'number' }).references(
     () => competition.id,
