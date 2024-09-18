@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 
+import { client } from '~/server/db'
+
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
 
 import { competition, competitionState } from '~/server/db/schema/competition'
@@ -267,7 +269,7 @@ export const competitionRouter = createTRPCRouter({
     })
     return res
   }),
-  getMyCompetitions: publicProcedure.query(async ({ ctx }) => {
+  getAllMyCompetitions: publicProcedure.query(async ({ ctx }) => {
     const user = await getCurrentUser()
     if (!user) {
       throw new TRPCError({
@@ -275,6 +277,11 @@ export const competitionRouter = createTRPCRouter({
         message: 'You are not authorized to access this resource.',
       })
     }
+
+    // REMOVE THIS
+    await client.sync()
+
+
     const res = await ctx.db.query.competition.findMany({
       where: (competitions, { eq }) => eq(competitions.ownerId, user.id),
       orderBy: (competitions, { desc }) => [desc(competitions.createdAt)],

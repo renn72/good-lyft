@@ -11,7 +11,7 @@ export const Navbar = () => {
           src='/logo/logo-black.webp'
           alt='logo'
           width={100}
-          height={100}
+          height={50.78}
         />
       </div>
       <div className='flex items-center gap-4'>

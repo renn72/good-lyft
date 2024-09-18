@@ -1,13 +1,7 @@
+'use client'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   Bell,
@@ -21,6 +15,12 @@ import {
   Settings,
 } from 'lucide-react'
 
+import { api } from '~/trpc/react'
+
+import { selectedCompetitionAtom } from './store'
+
+import { CompSelect } from './comp-select'
+
 export default function PowerliftingDashboard() {
   const tabs = [
     { value: 'home', label: 'Home', icon: Home },
@@ -32,6 +32,9 @@ export default function PowerliftingDashboard() {
     { value: 'comp-day', label: 'Comp Day', icon: Calendar },
     { value: 'settings', label: 'Settings', icon: Settings },
   ]
+  const { data: competitions, isLoading : isLoadingCompetitions } = api.competition.getAllMyCompetitions.useQuery()
+
+  if (isLoadingCompetitions) return null
 
   return (
     <div className='flex h-screen bg-gray-100 dark:bg-gray-900'>
@@ -100,22 +103,7 @@ export default function PowerliftingDashboard() {
             </Button>
             <div className='flex w-full items-center justify-between'>
               <div className='flex items-center gap-4'>
-                <Select>
-                  <SelectTrigger className='w-[280px]'>
-                    <SelectValue placeholder='Select Competition' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='comp1'>
-                      2023 National Powerlifting Championship
-                    </SelectItem>
-                    <SelectItem value='comp2'>
-                      Regional Qualifier Series
-                    </SelectItem>
-                    <SelectItem value='comp3'>
-                      University Invitational
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <CompSelect />
                 <Link
                   href='/admin/create'
                   passHref

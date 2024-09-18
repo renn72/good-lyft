@@ -2,10 +2,9 @@ import '@/styles/globals.css'
 import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Epilogue, Manrope } from 'next/font/google'
 import { type Metadata } from 'next'
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import { TRPCReactProvider } from '@/trpc/react'
+import { Providers } from '@/components/provider'
 
 import { Navbar } from '@/components/layout/navbar'
 
@@ -34,10 +33,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TRPCReactProvider>
-              <Navbar />
-              {children}
-            </TRPCReactProvider>
+            <Providers>
+              <TRPCReactProvider>
+                <Navbar />
+                {children}
+              </TRPCReactProvider>
+            </Providers>
           </ThemeProvider>
         </body>
       </html>
