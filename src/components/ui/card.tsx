@@ -9,7 +9,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: "",
-        secondary: "bg-secondary",
+        muted: "bg-muted",
         outline: "border-card-outline",
         accent: "border-card-accent",
       },
