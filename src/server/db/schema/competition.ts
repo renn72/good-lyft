@@ -18,7 +18,7 @@ export const competition = createTable('competition', {
   competitionStateId: int('competition_state_id', {
     mode: 'number',
   }).references(() => competitionState.id),
-  prettyId: text('pretty_id'),
+  prettyId: text('pretty_id').notNull(),
   ownerId: int('owner_id', { mode: 'number' }).references(() => user.id),
   name: text('name'),
   city: text('city'),

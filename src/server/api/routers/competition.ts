@@ -75,7 +75,7 @@ export const competitionRouter = createTRPCRouter({
       console.log('input', input)
 
       let comp_id =
-        input.name.trim().replaceAll(/\s/g, '-') +
+        input.name.trim().toLowerCase().replaceAll(/\s/g, '-') +
         '-' +
         getDateFromDate(input.date)
       const idCheck = await ctx.db.query.competition.findFirst({

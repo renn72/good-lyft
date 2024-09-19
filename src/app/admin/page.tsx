@@ -1,7 +1,8 @@
 'use client'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useEffect } from 'react'
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   Bell,
@@ -15,13 +16,26 @@ import {
   Settings,
 } from 'lucide-react'
 
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { api } from '~/trpc/react'
 
 import { selectedCompetitionAtom } from './store'
 
 import { CompSelect } from './comp-select'
+import { HomeTab } from './home'
 
 export default function PowerliftingDashboard() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const competitionId = searchParams.get('comp')
+  const currentTab = searchParams.get('tab')
+  useEffect(() => {
+    if (!currentTab || currentTab === 'null') {
+      router.push(`${pathname}?comp=${competitionId}&tab=home`)
+    }
+  }, [])
+
   const tabs = [
     { value: 'home', label: 'Home', icon: Home },
     { value: 'competitors', label: 'Competitors', icon: Users },
@@ -32,7 +46,8 @@ export default function PowerliftingDashboard() {
     { value: 'comp-day', label: 'Comp Day', icon: Calendar },
     { value: 'settings', label: 'Settings', icon: Settings },
   ]
-  const { data: competitions, isLoading : isLoadingCompetitions } = api.competition.getAllMyCompetitions.useQuery()
+  const { data: competitions, isLoading: isLoadingCompetitions } =
+    api.competition.getAllMyCompetitions.useQuery()
 
   if (isLoadingCompetitions) return null
 
@@ -42,6 +57,9 @@ export default function PowerliftingDashboard() {
         defaultValue='home'
         className='flex w-full'
         orientation='vertical'
+        onValueChange={(value) => {
+          router.push(`${pathname}?comp=${competitionId}&tab=${value}`)
+        }}
       >
         {/* Sidebar */}
         <TabsList className='hidden h-full w-64 flex-col justify-start space-y-2 bg-white p-4 dark:bg-gray-800 md:flex'>
@@ -52,7 +70,7 @@ export default function PowerliftingDashboard() {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className='flex w-full items-center justify-start space-x-2 px-4 py-2 text-left'
+              className='flex w-full items-center justify-start space-x-2 px-4 py-2 text-left cursor-pointer'
             >
               <tab.icon className='h-5 w-5' />
               <span>{tab.label}</span>
@@ -129,78 +147,54 @@ export default function PowerliftingDashboard() {
 
           {/* Dashboard Content */}
           <main className='flex-1 overflow-y-auto p-4'>
-            {tabs.map((tab) => (
-              <TabsContent
-                key={tab.value}
-                value={tab.value}
-                className='mt-0'
-              >
-                <h2 className='mb-4 text-2xl font-bold'>{tab.label}</h2>
-                {tab.value === 'home' && (
-                  <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-                    <Card>
-                      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                        <CardTitle className='text-sm font-medium'>
-                          Total Competitors
-                        </CardTitle>
-                        <Users className='h-4 w-4 text-muted-foreground' />
-                      </CardHeader>
-                      <CardContent>
-                        <div className='text-2xl font-bold'>156</div>
-                        <p className='text-xs text-muted-foreground'>
-                          12 new registrations
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                        <CardTitle className='text-sm font-medium'>
-                          Weigh-ins Completed
-                        </CardTitle>
-                        <Scale className='h-4 w-4 text-muted-foreground' />
-                      </CardHeader>
-                      <CardContent>
-                        <div className='text-2xl font-bold'>89</div>
-                        <p className='text-xs text-muted-foreground'>
-                          57% of total competitors
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                        <CardTitle className='text-sm font-medium'>
-                          Active Judges
-                        </CardTitle>
-                        <Gavel className='h-4 w-4 text-muted-foreground' />
-                      </CardHeader>
-                      <CardContent>
-                        <div className='text-2xl font-bold'>12</div>
-                        <p className='text-xs text-muted-foreground'>
-                          3 international, 9 national
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                        <CardTitle className='text-sm font-medium'>
-                          Records Broken
-                        </CardTitle>
-                        <Trophy className='h-4 w-4 text-muted-foreground' />
-                      </CardHeader>
-                      <CardContent>
-                        <div className='text-2xl font-bold'>7</div>
-                        <p className='text-xs text-muted-foreground'>
-                          2 world, 5 national
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-                {tab.value !== 'home' && (
-                  <p>Content for {tab.label} goes here.</p>
-                )}
-              </TabsContent>
-            ))}
+            <TabsContent
+              value={'home'}
+              className='mt-0'
+            >
+              <HomeTab />
+            </TabsContent>
+            <TabsContent
+              value={'competitors'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Competitors</h2>
+            </TabsContent>
+            <TabsContent
+              value={'weigh-in'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Weigh-in</h2>
+            </TabsContent>
+            <TabsContent
+              value={'judges'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Judges</h2>
+            </TabsContent>
+            <TabsContent
+              value={'leaderboards'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Leaderboards</h2>
+            </TabsContent>
+            <TabsContent
+              value={'screen-management'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Screen Management</h2>
+            </TabsContent>
+            <TabsContent
+              value={'comp-day'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Comp Day</h2>
+            </TabsContent>
+            <TabsContent
+              value={'settings'}
+              className='mt-0'
+            >
+              <h2 className='mb-4 text-2xl font-bold'>Settings</h2>
+            </TabsContent>
           </main>
         </div>
       </Tabs>

@@ -1,7 +1,7 @@
 'use client'
-import { api } from '~/trpc/react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { useAtom } from 'jotai'
+import { api } from '~/trpc/react'
 import {
   Select,
   SelectContent,
@@ -10,28 +10,35 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { selectedCompetitionAtom } from './store'
 
 export const CompSelect = () => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const competitionId = searchParams.get('comp')
+  const currentTab = searchParams.get('tab')
+  console.log(competitionId)
+
   const context = api.useUtils()
   const competitions = context.competition.getAllMyCompetitions.getData()
 
-  const [selectedCompetition, setSelectedCompetition] = useAtom(
-    selectedCompetitionAtom,
-  )
-
   useEffect(() => {
-    if (selectedCompetition == '' && competitions && competitions?.length > 0) {
-      setSelectedCompetition(competitions[0]?.id.toString() || '')
+    if (!competitionId || competitionId === 'null') {
+      if (competitions && competitions?.length > 0) {
+        router.push(`${pathname}?comp=${competitions[0]?.prettyId}&tab=home`)
+      }
     }
   }, [])
+
+  if (competitionId == 'null') return null
 
   return (
     <Select
       onValueChange={(value) => {
-        setSelectedCompetition(value)
+        const t = currentTab || 'home'
+        router.push(`${pathname}?comp=${value}&tab=${t}`)
       }}
-      defaultValue={competitions?.[0]?.id.toString() || ''}
+      defaultValue={competitionId || ''}
     >
       <SelectTrigger className='w-[280px]'>
         <SelectValue placeholder='Select Competition' />
@@ -40,7 +47,7 @@ export const CompSelect = () => {
         {competitions?.map((competition) => (
           <SelectItem
             key={competition.id}
-            value={competition.id.toString()}
+            value={competition.prettyId?.toLowerCase()}
           >
             {competition.name}
           </SelectItem>
