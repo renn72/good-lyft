@@ -133,18 +133,18 @@ export const CreateCompetition = () => {
       state: data.state,
       city: data.city,
       date: data.date,
-      daysOfCompetition: data.daysOfCompetition,
+      daysOfComp: data.daysOfCompetition,
       platforms: data.platforms,
       rules: data.rules,
       notes: data.notes,
       events: data.events,
       currentState: 'created',
       equipment: data.equipment.map((item) => item.toString()).join('/'),
-      formular: data.formular,
-      wc_male: data.wc_male.map((item) => item.toString()).join('/'),
+      formula: data.formular,
+      wcMale: data.wc_male.map((item) => item.toString()).join('/'),
       divisions: data.divisions,
-      wc_female: data.wc_female.map((item) => item.toString()).join('/'),
-      wc_mix: data.wc_mix.map((item) => item.toString()).join('/'),
+      wcFemale: data.wc_female.map((item) => item.toString()).join('/'),
+      wcMixed: data.wc_mix.map((item) => item.toString()).join('/'),
     }
     createComp(input)
   }

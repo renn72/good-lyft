@@ -11,10 +11,21 @@ import {
   Calendar,
   Settings,
 } from 'lucide-react'
+import CompInfo from './_components/comp-info'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { api } from '~/trpc/react'
 
 export const HomeTab = () => {
+  const searchParams = useSearchParams()
+  const competitionId = searchParams.get('comp')
+  const context = api.useUtils()
+  const competitions = context.competition.getAllMyCompetitions.getData()
+  const competition = competitions?.find((c) => c.prettyId === competitionId)
+
+  if (!competition) return null
   return (
     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+      <CompInfo competition={competition} />
       <Card>
         <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
           <CardTitle className='text-sm font-medium'>

@@ -25,14 +25,14 @@ const createSchema = z.object({
   city: z.string().optional(),
   date: z.date(),
   ownerId: z.number().optional(),
-  daysOfCompetition: z.number().nonnegative().int().min(1),
+  daysOfComp: z.number().nonnegative().int().min(1),
   platforms: z.number().nonnegative().int().min(1),
   rules: z.string().optional(),
   notes: z.string(),
   events: z.array(z.string()),
   equipment: z.string(),
-  formular: z.string(),
-  wc_male: z.string().optional(),
+  formula: z.string(),
+  wcMale: z.string().optional(),
   currentState: z.string().optional(),
   competitorLimit: z.number().nonnegative().int().optional(),
   venue: z.string().optional(),
@@ -46,8 +46,8 @@ const createSchema = z.object({
       }),
     )
     .nonempty(),
-  wc_female: z.string().optional(),
-  wc_mix: z.string().optional(),
+  wcFemale: z.string().optional(),
+  wcMixed: z.string().optional(),
 })
 
 const updateDaysOfCompetitionSchema = z.object({
