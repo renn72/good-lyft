@@ -92,7 +92,7 @@ export const competitionRouter = createTRPCRouter({
           ...input,
           prettyId: comp_id,
         })
-        .returning({ id: competition.id })
+        .returning({ id: competition.id, prettyId: competition.prettyId })
 
       const ins = input.divisions.map(
         (d: {
@@ -186,6 +186,7 @@ export const competitionRouter = createTRPCRouter({
         currentLifter: null,
         nextLifter: null,
       })
+      return resComp[0]
     }),
 
   updateDaysOfCompetition: publicProcedure

@@ -1,19 +1,11 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Bell,
-  Home,
-  Users,
-  Scale,
-  Gavel,
-  Trophy,
-  Monitor,
-  Calendar,
-  Settings,
-} from 'lucide-react'
+import { Users, Scale, Gavel, Trophy } from 'lucide-react'
+import { toast } from 'sonner'
 import CompInfo from './_components/comp-info'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { api } from '~/trpc/react'
+import { Button } from '@/components/ui/button'
 
 export const HomeTab = () => {
   const searchParams = useSearchParams()
@@ -72,6 +64,21 @@ export const HomeTab = () => {
         <CardContent>
           <div className='text-2xl font-bold'>7</div>
           <p className='text-xs text-muted-foreground'>2 world, 5 national</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+          <CardTitle className='text-sm font-medium'>Records Broken</CardTitle>
+          <Trophy className='h-4 w-4 text-muted-foreground' />
+        </CardHeader>
+        <CardContent>
+          <Button
+            onClick={() => {
+              toast.success('Success')
+            }}
+          >
+            Toast
+          </Button>
         </CardContent>
       </Card>
     </div>

@@ -6,6 +6,8 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { TRPCReactProvider } from '@/trpc/react'
 import { Providers } from '@/components/provider'
 
+import { Toaster } from "@/components/ui/sonner"
+
 import { Navbar } from '@/components/layout/navbar'
 
 export const metadata: Metadata = {
@@ -37,6 +39,7 @@ export default function RootLayout({
               <TRPCReactProvider>
                 <Navbar />
                 {children}
+                <Toaster />
               </TRPCReactProvider>
             </Providers>
           </ThemeProvider>

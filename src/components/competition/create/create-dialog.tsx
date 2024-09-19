@@ -2,9 +2,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, } from 'react-hook-form'
 import { z } from 'zod'
+import { useState } from 'react'
 
 import { api } from '~/trpc/react'
 
+import { Icons } from '@/components/ui/icons'
 import { CalendarIcon, PlusCircle, XCircle } from 'lucide-react'
 import { cn } from '~/lib/utils'
 import { Calendar } from '~/components/ui/calendar'
@@ -36,6 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import {
   ageDivisionsData,
@@ -84,16 +87,31 @@ export const formSchema = z.object({
 })
 
 export const CreateCompetition = () => {
+  const [ buttonText, setButtonText ] = useState('Create')
+  const [ isSubmitting, setIsSubmitting ] = useState(false)
   const context = api.useUtils()
+  const router = useRouter()
 
   const { mutate: createComp } = api.competition.create.useMutation({
+    onMutate: () => {
+      setButtonText('Creating...')
+      setIsSubmitting(true)
+    },
     onSettled: () => {
       context.competition.invalidate()
     },
-    onSuccess: () => {
+    onSuccess: (e) => {
       toast.success('Competition Created')
+      form.reset()
+      setButtonText('Created')
+      setIsSubmitting(false)
+      setTimeout(() => {
+        router.push(`/admin?comp=${e?.prettyId}&tab=home`)
+      }, 1500)
     },
     onError: () => {
+      setButtonText('Create')
+      setIsSubmitting(false)
       toast.error('Error Creating Competition')
     },
   })
@@ -150,7 +168,7 @@ export const CreateCompetition = () => {
   }
 
   return (
-    <section className='font-xl my-8 flex h-full w-full grow flex-col items-center'>
+    <section className='font-xl my-8 flex h-full w-full grow flex-col items-center py-8'>
       <h1 className='text-4xl font-bold'>Create Your Event</h1>
       <h2 className='text-lg font-normal text-muted-foreground'>
         Fill out the form to set up your powerlifting competition.
@@ -662,19 +680,11 @@ export const CreateCompetition = () => {
           </Card>
 
           <Button
-            className='mt-4 w-min'
+            className='mt-4 w-48 mx-auto flex justify-center gap-4 items-center'
             type='submit'
           >
-            Submit
-          </Button>
-          <Button
-            className='w-min'
-            onClick={(e) => {
-              e.preventDefault()
-              console.log(form.getValues())
-            }}
-          >
-            Data
+            {buttonText}
+            { isSubmitting && <Icons.spinner className='animate-spin h-5 w-5 text-white' /> }
           </Button>
         </form>
       </Form>
