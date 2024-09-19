@@ -19,8 +19,6 @@ import {
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { api } from '~/trpc/react'
 
-import { selectedCompetitionAtom } from './store'
-
 import { CompSelect } from './comp-select'
 import { HomeTab } from './home'
 
@@ -54,7 +52,7 @@ export default function PowerliftingDashboard() {
   return (
     <div className='flex h-screen bg-gray-100 dark:bg-gray-900'>
       <Tabs
-        defaultValue='home'
+        defaultValue={currentTab || 'home'}
         className='flex w-full'
         orientation='vertical'
         onValueChange={(value) => {
