@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import { ModeToggle } from '@/components/layout/mode-toggle'
 import { UserButton } from '@/components/layout/user-button'
+import { AdminMenu } from './admin-menu'
 
 export const Navbar = () => {
   return (
@@ -15,6 +16,7 @@ export const Navbar = () => {
         />
       </div>
       <div className='flex items-center gap-4'>
+        <AdminMenu />
         <ModeToggle />
         <UserButton />
       </div>
