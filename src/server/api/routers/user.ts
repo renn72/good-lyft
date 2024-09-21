@@ -7,6 +7,8 @@ import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
 import { user } from '~/server/db/schema/user'
 
+import { clerkClient } from '~/server/api/clerk'
+
 import { eq } from 'drizzle-orm'
 
 import { generateFullName, generateName } from '~/lib/names'
@@ -30,12 +32,12 @@ export const userRouter = createTRPCRouter({
   sync: publicProcedure.mutation(async ({ ctx }) => {
     const cUser = await currentUser()
     const isRoot = await isUserRoot(cUser?.id || '')
-    // if (!isRoot) {
-    //   throw new TRPCError({
-    //     code: 'UNAUTHORIZED',
-    //     message: 'You are not authorized to access this resource.',
-    //   })
-    // }
+    if (!isRoot) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You are not authorized to access this resource.',
+      })
+    }
 
     await client.sync()
     return true
@@ -109,10 +111,11 @@ export const userRouter = createTRPCRouter({
       return res
     }),
   generateFakeUsers: publicProcedure.mutation(async ({ ctx }) => {
-    const fakeUsers = [...Array(10).keys()].map(() => {
+    const fakeUsers = [...Array(9).keys()].map(() => {
       const name = generateFullName()
       return {
         name: name,
+        email: name.toLowerCase().replaceAll(' ', '') + Math.floor(Math.random() * 1000).toString() + '@warner.systems',
         // generate a random birth date
         birthDate: new Date(
           Math.floor(Math.random() * 30) + 1980,
@@ -127,29 +130,51 @@ export const userRouter = createTRPCRouter({
           .padStart(3, '0')}${Math.floor(Math.random() * 100)
           .toString()
           .padStart(4, '0')}`,
-        instagram: '@' + name.replace(' ', '').toLowerCase(),
-        openlifter:
-          'www.openpowerlifting.org/' + name.replace(' ', '').toLowerCase(),
         notes: '',
       }
     })
-    const usersGen = fakeUsers.map((name) =>
-      db.insert(user).values({
-        name: name.name,
-        birthDate: name.birthDate,
-        address: name.address,
-        phone: name.phone,
-        instagram: name.instagram,
-        openLifter: name.openlifter,
-        notes: name.notes,
-        isFake: true,
-      }),
-    )
-    if (isTuple(usersGen)) {
-      await ctx.db.batch(usersGen)
+
+    for (const fUser of fakeUsers) {
+      const u = await db
+        .insert(user)
+        .values({
+          email: fUser.email,
+          name: fUser.name,
+          birthDate: fUser.birthDate,
+          address: fUser.address,
+          phone: fUser.phone,
+          notes: fUser.notes,
+          isFake: true,
+        })
+        .returning({ id: user.id })
+      const res = await clerkClient.users.createUser({
+        emailAddress: [fUser.email],
+        firstName: fUser.name.split(' ')[0] || '',
+        lastName: fUser.name.split(' ')[1] || '',
+        password: 'underground55412',
+      })
+      await ctx.db
+        .update(user)
+        .set({
+          clerkId: res.id,
+        })
+        .where(eq(user.id, u[0]?.id || 0))
+
+      console.log(res)
     }
+
     return true
   }),
+  deleteUser: publicProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .delete(user)
+        .where(eq(user.id, input))
+        .returning({ clerkId: user.clerkId })
+      if (res[0]?.clerkId) await clerkClient.users.deleteUser(res[0]?.clerkId)
+      return res
+    }),
   getFakeUsers: publicProcedure.query(async ({ ctx }) => {
     const res = await db.query.user.findMany({
       where: (users, { eq }) => eq(users.isFake, true),
@@ -161,7 +186,13 @@ export const userRouter = createTRPCRouter({
     return res
   }),
   deleteFakeUsers: publicProcedure.mutation(async ({ ctx }) => {
-    const res = await db.delete(user).where(eq(user.isFake, true))
+    const res = await db
+      .delete(user)
+      .where(eq(user.isFake, true))
+      .returning({ clerkId: user.clerkId })
+    for (const u of res) {
+      if (u.clerkId) await clerkClient.users.deleteUser(u.clerkId)
+    }
     return res
   }),
 })

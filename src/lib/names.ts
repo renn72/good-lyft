@@ -1,3 +1,15 @@
+
+const capFirst = (string: string | undefined) => {
+    if (!string) {
+        return string
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+const getRandomInt = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min)) + min
+}
+
 export function generateFullName() {
     const name1 = [
         'abandoned',

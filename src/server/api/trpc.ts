@@ -9,6 +9,9 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { TRPCError } from '@trpc/server'
+
+import { getAuth } from '@clerk/nextjs/server'
 
 import { db } from "@/server/db";
 
@@ -24,9 +27,10 @@ import { db } from "@/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: { headers: Headers, req: any }) => {
   return {
     db,
+    auth: getAuth(opts.req),
     ...opts,
   };
 };
@@ -96,6 +100,32 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+const isAuthed = t.middleware( async ({ next, ctx }) => {
+  const start = Date.now();
+  if (!ctx.auth.userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+
+  if (t._config.isDev) {
+    // artificial delay in dev
+    const waitMs = Math.floor(Math.random() * 400) + 100;
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+
+  const result = await next({
+    ctx: {
+      auth: ctx.auth,
+    },
+  })
+
+
+  const end = Date.now();
+  console.log(`[TRPC] ${ctx} took ${end - start}ms to execute`);
+
+  return result;
+})
+
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -104,3 +134,4 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+export const protectedProcedure = t.procedure.use(isAuthed);
