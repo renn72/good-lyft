@@ -15,6 +15,20 @@
       "when": 1726553244795,
       "tag": "0001_sweet_shatterstar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1726882636183,
+      "tag": "0002_rich_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1726883478553,
+      "tag": "0003_harsh_robin_chapel",
+      "breakpoints": true
     }
   ]
 }

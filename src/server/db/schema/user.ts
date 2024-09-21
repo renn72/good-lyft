@@ -23,6 +23,7 @@ export const user = createTable(
     phone: text('phone'),
     email: text('email'),
     isFake: int('is_fake', { mode: 'boolean' }),
+    isRoot: int('is_root', { mode: 'boolean' }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -36,7 +37,29 @@ export const user = createTable(
   }),
 )
 
+export const role = createTable('role', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+    onDelete: 'cascade',
+  }),
+  name: text('name'),
+})
+
+export const roleRelations = relations(role, ({ one, many }) => ({
+  user: one(user, {
+    fields: [role.userId],
+    references: [user.id],
+  }),
+}))
+
 export const userRelations = relations(user, ({ one, many }) => ({
+  roles: many(role),
   entries: many(entry),
   competitions: many(competition),
   lifts: many(lift),
