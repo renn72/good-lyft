@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 
 import { client } from '~/server/db'
 
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc'
 
 import { competition, competitionState } from '~/server/db/schema/competition'
 import { division } from '~/server/db/schema/division'
@@ -61,6 +61,34 @@ const updatePlatformsSchema = z.object({
 })
 
 export const competitionRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.competition.findMany({
+      orderBy: (competitions, { desc }) => [desc(competitions.createdAt)],
+      with: {
+        divisions: true,
+        competitionState: true,
+        events: true,
+        entries: {
+          with: {
+            lifts: true,
+            user: true,
+            competition: true,
+            entryToDivisions: {
+              with: {
+                division: true,
+              },
+            },
+            entryToEvents: {
+              with: {
+                event: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    return res
+  }),
   create: publicProcedure
     .input(createSchema)
     .mutation(async ({ ctx, input }) => {

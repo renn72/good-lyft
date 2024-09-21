@@ -2,17 +2,13 @@
 import { Button } from '@/components/ui/button'
 import { useEffect } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import {
-  Home,
-  Users as UsersIcon,
-  Scale,
-  Settings,
-} from 'lucide-react'
+import { Home, Users as UsersIcon, Scale, Settings } from 'lucide-react'
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { api } from '~/trpc/react'
 
 import { Users } from './users'
+import { Competition } from './competition'
 
 export default function PowerliftingDashboard() {
   const router = useRouter()
@@ -27,7 +23,7 @@ export default function PowerliftingDashboard() {
   const tabs = [
     { value: 'home', label: 'Home', icon: Home },
     { value: 'users', label: 'Users', icon: UsersIcon },
-    { value: 'competitions', label: 'Competition\'s', icon: Scale },
+    { value: 'competitions', label: "Competition's", icon: Scale },
     { value: 'settings', label: 'Settings', icon: Settings },
   ]
   return (
@@ -49,7 +45,7 @@ export default function PowerliftingDashboard() {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className='flex w-full items-center justify-start space-x-2 px-4 py-2 text-left cursor-pointer'
+              className='flex w-full cursor-pointer items-center justify-start space-x-2 px-4 py-2 text-left'
             >
               <tab.icon className='h-5 w-5' />
               <span>{tab.label}</span>
@@ -98,8 +94,7 @@ export default function PowerliftingDashboard() {
               </svg>
               <span className='sr-only'>Open menu</span>
             </Button>
-            <div className='flex w-full items-center justify-between'>
-            </div>
+            <div className='flex w-full items-center justify-between'></div>
           </header>
 
           {/* Dashboard Content */}
@@ -120,7 +115,7 @@ export default function PowerliftingDashboard() {
               value={'competitions'}
               className='mt-0'
             >
-              <h2 className='mb-4 text-2xl font-bold'>Competition's</h2>
+              <Competition />
             </TabsContent>
             <TabsContent
               value={'settings'}
@@ -134,4 +129,3 @@ export default function PowerliftingDashboard() {
     </div>
   )
 }
-
