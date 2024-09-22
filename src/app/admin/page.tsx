@@ -21,6 +21,7 @@ import { api } from '~/trpc/react'
 
 import { CompSelect } from './comp-select'
 import { HomeTab } from './home'
+import { Competitors } from './competitiors'
 
 export default function PowerliftingDashboard() {
   const router = useRouter()
@@ -155,7 +156,7 @@ export default function PowerliftingDashboard() {
               value={'competitors'}
               className='mt-0'
             >
-              <h2 className='mb-4 text-2xl font-bold'>Competitors</h2>
+              <Competitors />
             </TabsContent>
             <TabsContent
               value={'weigh-in'}

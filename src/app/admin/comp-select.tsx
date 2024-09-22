@@ -15,22 +15,26 @@ export const CompSelect = () => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const competitionId = searchParams.get('comp')
+  let competitionId = searchParams.get('comp')
   const currentTab = searchParams.get('tab')
-  console.log(competitionId)
 
   const context = api.useUtils()
   const competitions = context.competition.getAllMyCompetitions.getData()
+  console.log(competitions)
 
   useEffect(() => {
+    console.log('effect')
     if (!competitionId || competitionId === 'null') {
-      if (competitions && competitions?.length > 0) {
+      console.log('no id')
+      if (competitions && competitions?.length > 0 && competitions[0]?.prettyId) {
+        console.log('competitions')
+        competitionId = competitions[0]?.prettyId
         router.push(`${pathname}?comp=${competitions[0]?.prettyId}&tab=home`)
       }
     }
   }, [])
 
-  if (competitionId == 'null') return null
+  // if (competitionId == 'null') return null
 
   return (
     <Select
