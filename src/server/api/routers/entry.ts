@@ -110,7 +110,7 @@ const createEntrySchema = z.object({
   teamLift: z.string().optional(),
   predictedWeight: z.string().optional(),
   entryWeight: z.string().optional(),
-  compId: z.number(),
+  competitionId: z.number(),
   userId: z.number().optional(),
 })
 
@@ -118,7 +118,7 @@ function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
 }
 
-export const compEntryRouter = createTRPCRouter({
+export const entryRouter = createTRPCRouter({
   deleteAllEntries: publicProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
@@ -204,7 +204,7 @@ export const compEntryRouter = createTRPCRouter({
           benchRack: input.benchRack,
           entryWeight: input.entryWeight,
           predictedWeight: input.predictedWeight,
-          competitionId: input.compId,
+          competitionId: input.competitionId,
           userId: userId,
         })
         .returning({ id: entry.id })

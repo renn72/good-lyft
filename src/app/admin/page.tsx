@@ -48,6 +48,8 @@ export default function PowerliftingDashboard() {
   const { data: competitions, isLoading: isLoadingCompetitions } =
     api.competition.getAllMyCompetitions.useQuery()
 
+  const selectedCompetition = competitions?.find((c) => c.prettyId.toLowerCase() === competitionId?.toLowerCase())
+
   if (isLoadingCompetitions) return null
 
   return (
@@ -156,7 +158,7 @@ export default function PowerliftingDashboard() {
               value={'competitors'}
               className='mt-0'
             >
-              <Competitors />
+              <Competitors competition={selectedCompetition} />
             </TabsContent>
             <TabsContent
               value={'weigh-in'}

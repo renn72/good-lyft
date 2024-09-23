@@ -10,4 +10,4 @@ export type GetCompetitionById = RouterOutputs['competition']['get']
 
 // export type GetLiftById = RouterOutputs['lift']['get']
 //
-// export type GetCompetitionEntryById = RouterOutputs['compEntry']['get']
+export type GetCompetitionEntryById = RouterOutputs['entry']['get']

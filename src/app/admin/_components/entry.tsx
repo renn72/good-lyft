@@ -6,7 +6,7 @@ import { cn } from '~/lib/utils'
 import type { GetCompetitionEntryById } from '~/lib/types'
 import { CircleCheck, CircleDot } from 'lucide-react'
 
-import DeleteEntryButton from './delete_entry'
+import { DeleteEntryButton } from './delete-entry'
 
 const Cell = ({
   title,
@@ -76,7 +76,7 @@ const CellArray = ({
   )
 }
 
-const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
+export const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
   return (
     <div
       className={cn(
@@ -88,7 +88,7 @@ const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
         <CircleCheck
           size={24}
           strokeWidth={3}
-          className='absolute left-6 top-1/2 -translate-y-1/2 text-complete '
+          className='absolute left-6 top-1/2 -translate-y-1/2 text-complete'
         />
       )}
       <Cell
@@ -111,12 +111,12 @@ const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
       <CellArray
         title='Events'
         className='col-span-3'
-        info={entry.events?.map((event) => event.event?.name || '')}
+        info={entry.entryToEvents?.map((event) => event.event?.name || '')}
       />
       <CellArray
         title='Divisions'
         className='col-span-3'
-        info={entry.compEntryToDivisions?.map(
+        info={entry.entryToDivisions?.map(
           (division) => division.division?.name || '',
         )}
       />
@@ -124,5 +124,3 @@ const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
     </div>
   )
 }
-
-export default Entry
