@@ -1,6 +1,7 @@
 'use client'
 import { Card, CardContent, CardHeader } from '~/components/ui/card'
 import { cn } from '~/lib/utils'
+import { ScrollArea } from '~/components/ui/scroll-area'
 
 import { Entry } from './_components/entry'
 import { EntryForm } from './_components/entry-form'
@@ -21,16 +22,11 @@ export const Competitors = ({
 
   if (!competition) return null
   return (
-    <div
-      className={cn(
-        className,
-        'flex w-full flex-col items-center gap-2 text-lg font-medium',
-      )}
-    >
+    <ScrollArea className={cn(className, 'flex w-full flex-col items-center gap-2 text-lg font-medium h-[calc(100vh-139px)]')}>
       <Card className='w-full'>
         <CardHeader>Entries</CardHeader>
         <CardContent>
-          <div className='flex w-full flex-col gap-4'>
+          <div className='flex w-full flex-col gap-2'>
             <div className='flex w-full justify-end gap-4'>
               <EntryForm competition={competition} />
               <AddFakeUsers competition={competition} />
@@ -45,6 +41,6 @@ export const Competitors = ({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </ScrollArea>
   )
 }

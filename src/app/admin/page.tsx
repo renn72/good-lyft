@@ -23,6 +23,8 @@ import { CompSelect } from './comp-select'
 import { HomeTab } from './home'
 import { Competitors } from './competitiors'
 
+export const dynamic = 'force-dynamic'
+
 export default function PowerliftingDashboard() {
   const router = useRouter()
   const pathname = usePathname()
@@ -46,14 +48,18 @@ export default function PowerliftingDashboard() {
     { value: 'settings', label: 'Settings', icon: Settings },
   ]
   const { data: competitions, isLoading: isLoadingCompetitions } =
-    api.competition.getAllMyCompetitions.useQuery()
+    api.competition.getAllMyCompetitions.useQuery(undefined, {
+      refetchInterval: 1000 * 60 * 1,
+    })
 
-  const selectedCompetition = competitions?.find((c) => c.prettyId.toLowerCase() === competitionId?.toLowerCase())
+  const selectedCompetition = competitions?.find(
+    (c) => c.prettyId.toLowerCase() === competitionId?.toLowerCase(),
+  )
 
   if (isLoadingCompetitions) return null
 
   return (
-    <div className='flex h-screen bg-gray-100 dark:bg-gray-900'>
+    <div className='flex bg-gray-100 dark:bg-gray-900 h-[calc(100vh-51px)]'>
       <Tabs
         defaultValue={currentTab || 'home'}
         className='flex w-full'
@@ -71,7 +77,7 @@ export default function PowerliftingDashboard() {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className='flex w-full items-center justify-start space-x-2 px-4 py-2 text-left cursor-pointer'
+              className='flex w-full cursor-pointer items-center justify-start space-x-2 px-4 py-2 text-left'
             >
               <tab.icon className='h-5 w-5' />
               <span>{tab.label}</span>

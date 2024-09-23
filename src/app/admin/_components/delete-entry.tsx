@@ -16,7 +16,7 @@ import { Button } from '~/components/ui/button'
 import { XIcon } from 'lucide-react'
 import type { GetCompetitionEntryById } from '~/lib/types'
 
-export const DeleteEntry = ({ entry }: { entry: GetCompetitionEntryById }) => {
+export const DeleteEntryButton = ({ entry }: { entry: GetCompetitionEntryById }) => {
   const ctx = api.useUtils()
   // const { mutate: deleteEntry } = api.compEntry.deleteEntry.useMutation({
   //   onError: (err) => {

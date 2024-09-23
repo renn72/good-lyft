@@ -20,7 +20,6 @@ export const CompSelect = () => {
 
   const context = api.useUtils()
   const competitions = context.competition.getAllMyCompetitions.getData()
-  console.log(competitions)
 
   useEffect(() => {
     console.log('effect')

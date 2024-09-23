@@ -19,7 +19,7 @@ function isTuple<T>(array: T[]): array is [T, ...T[]] {
 
 const createSchema = z.object({
   name: z.string(),
-  birthDate: z.string().optional(),
+  birthDate: z.date().optional(),
   address: z.string().optional(),
   phone: z.string().optional(),
   instagram: z.string().optional(),
@@ -121,7 +121,7 @@ export const userRouter = createTRPCRouter({
           Math.floor(Math.random() * 30) + 1980,
           Math.floor(Math.random() * 12),
           Math.floor(Math.random() * 26),
-        ).toString(),
+        ),
         isFake: true,
         address: `${Math.floor(Math.random() * 100)} ${generateName()} St`,
         // generate a random phone number

@@ -81,7 +81,7 @@ export const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
     <div
       className={cn(
         'grid grid-flow-row grid-cols-12 justify-between rounded-full',
-        'relative border border-input px-8 py-2 hover:bg-input hover:bg-opacity-10',
+        'relative border border-input px-4 py-1 hover:bg-input hover:bg-opacity-10',
       )}
     >
       {entry.isLocked && (

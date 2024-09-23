@@ -27,10 +27,14 @@ export const AddFakeUsers = ({
     },
     onSuccess: () => {
       toast('Created')
+      void ctx.competition.getAllMyCompetitions.refetch()
     },
   })
 
+  console.log('fakeUsers', fakeUsers)
+
   const createFake = () => {
+    console.log('createFake')
     if (!fakeUsers) {
       return
     }
@@ -41,8 +45,6 @@ export const AddFakeUsers = ({
     const events = competition?.events?.map((event) => event.id.toString())
 
     for (const user of fakeUsers) {
-      if (!user.birthDate) continue
-      const birthDate = new Date(user.birthDate)
 
       let pickedEvents = events
         .filter((_) => Math.random() > 0.5)
@@ -60,7 +62,7 @@ export const AddFakeUsers = ({
 
       mutate({
         name: user.name || '',
-        birthDate: birthDate,
+        birthDate: user.birthDate || new Date(),
         address: user.address || '',
         phone: user.phone || '',
         equipment:

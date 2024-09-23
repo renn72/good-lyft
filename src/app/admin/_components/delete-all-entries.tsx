@@ -10,6 +10,7 @@ export const DeleteAllEntries = ({ compId }: { compId: number }) => {
     },
     onSuccess: () => {
       console.log('deleted')
+      void ctx.competition.getAllMyCompetitions.invalidate()
     },
   })
   return (
