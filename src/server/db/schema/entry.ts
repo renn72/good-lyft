@@ -31,6 +31,7 @@ export const entry = createTable(
     gender: text('gender'),
     predictedWeight: int('predicted_weight'),
     entryWeight: int('entry_weight'),
+    equipment: text('equipment'),
     wc: text('wc'),
     squatPB: text('squat_pb'),
     benchPB: text('bench_pb'),

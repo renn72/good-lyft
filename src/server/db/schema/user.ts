@@ -14,7 +14,7 @@ export const user = createTable(
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     name: text('name'),
     clerkId: text('clerk_id'),
-    birthDate: text('birth_date'),
+    birthDate: int('birth_date', { mode: 'timestamp' }),
     gender: text('gender'),
     address: text('address'),
     notes: text('notes'),
