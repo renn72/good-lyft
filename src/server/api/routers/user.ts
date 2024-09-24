@@ -91,6 +91,14 @@ export const userRouter = createTRPCRouter({
     }),
 
   isUserRoot: publicProcedure.query(async ({ ctx }) => {
+
+    // const clerkId = 'user_2m8MFN14493ajBeHHWnLwkx88B1'
+    // const id = 10
+    // const res = await ctx.db.query.user.findFirst({
+    //   where: (users, { eq }) => eq(users.id, id),
+    // })
+    // return res?.isRoot
+
     const cUser = await currentUser()
     if (!cUser) {
       return false
@@ -198,7 +206,8 @@ export const userRouter = createTRPCRouter({
 })
 
 export const getCurrentUser = async () => {
-  const u = await currentUser()
+  // const u = await currentUser()
+  const u = { id : 'user_2m8MFN14493ajBeHHWnLwkx88B1'}
   return await db.query.user.findFirst({
     where: (users, { eq }) => eq(users.clerkId, u?.id || ''),
   })

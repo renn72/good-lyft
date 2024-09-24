@@ -1,5 +1,9 @@
 'use client'
+
 import Link from 'next/link'
+
+import { Check, Shield, Star, Zap } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,12 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Check, Zap, Shield, Star } from 'lucide-react'
+
 export default function Home() {
   return (
     <div className='flex min-h-screen flex-col'>
       <main className='flex-1'>
-        <section className='w-full bg-background py-12 md:py-24 lg:py-32 xl:py-48 h-screen flex flex-col justify-center'>
+        <section className='flex h-screen w-full flex-col justify-center bg-background py-12 md:py-24 lg:py-32 xl:py-48'>
           <div className='container px-4 md:px-6'>
             <div className='flex flex-col items-center space-y-4 text-center'>
               <div className='space-y-2'>

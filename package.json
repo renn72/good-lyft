@@ -14,6 +14,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.5.0",
     "@clerk/backend": "^1.13.2",
     "@clerk/nextjs": "^5.5.2",
     "@hookform/resolvers": "^3.9.0",
@@ -62,6 +63,7 @@
     "jotai": "^2.9.3",
     "lucide-react": "^0.439.0",
     "next": "^14.2.4",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-day-picker": "8.10.1",
@@ -78,6 +80,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@types/eslint": "^8.56.10",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
@@ -89,7 +92,7 @@
     "eslint-config-next": "^14.2.4",
     "eslint-plugin-drizzle": "^0.2.3",
     "postcss": "^8.4.39",
-    "prettier": "^3.3.2",
+    "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.5.3"

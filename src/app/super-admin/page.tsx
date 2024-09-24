@@ -1,14 +1,16 @@
 'use client'
-import { Button } from '@/components/ui/button'
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Home, Users as UsersIcon, Scale, Settings } from 'lucide-react'
 
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { api } from '~/trpc/react'
+import { api } from '@/trpc/react'
+import { Home, Scale, Settings, Users as UsersIcon } from 'lucide-react'
 
-import { Users } from './users'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 import { Competition } from './competition'
+import { Users } from './users'
+import { Button } from '@/components/ui/button'
 
 export default function PowerliftingDashboard() {
   const router = useRouter()
