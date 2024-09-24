@@ -1,1 +1,0 @@
-ALTER TABLE `good-lyft_user` ADD `is_root` integer;

@@ -1,1 +1,0 @@
-ALTER TABLE `good-lyft_entry` ADD `equipment` text;

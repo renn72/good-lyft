@@ -7,8 +7,6 @@ import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
 import { user } from '~/server/db/schema/user'
 
-import { clerkClient } from '~/server/api/clerk'
-
 import { eq } from 'drizzle-orm'
 
 import { generateFullName, generateName } from '~/lib/names'

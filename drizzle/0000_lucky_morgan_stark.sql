@@ -3,7 +3,7 @@ CREATE TABLE `good-lyft_competition` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`competition_state_id` integer,
-	`pretty_id` text,
+	`pretty_id` text NOT NULL,
 	`owner_id` integer,
 	`name` text,
 	`city` text,
@@ -77,8 +77,9 @@ CREATE TABLE `good-lyft_entry` (
 	`competition_id` integer,
 	`birth_date` integer,
 	`gender` text,
-	`predicted_weight` integer,
-	`entry_weight` integer,
+	`predicted_weight` text,
+	`entry_weight` text,
+	`equipment` text,
 	`wc` text,
 	`squat_pb` text,
 	`bench_pb` text,
@@ -116,6 +117,7 @@ CREATE TABLE `good-lyft_event` (
 	`is_squat` integer,
 	`is_deadlift` integer,
 	`is_bench` integer,
+	`other_lifts` text,
 	`notes` text,
 	`competition_id` integer,
 	FOREIGN KEY (`competition_id`) REFERENCES `good-lyft_competition`(`id`) ON UPDATE no action ON DELETE cascade
@@ -146,11 +148,58 @@ CREATE TABLE `good-lyft_lift` (
 	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `good-lyft_user` (
+CREATE TABLE `good-lyft_notification` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`competition_id` integer,
+	`user_id` integer,
+	`title` text,
+	`description` text,
+	`is_read` integer,
+	`is_viewed` integer,
+	`is_deleted` integer,
+	`notes` text,
+	FOREIGN KEY (`competition_id`) REFERENCES `good-lyft_competition`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `good-lyft_account` (
+	`user_id` text(255) NOT NULL,
+	`type` text(255) NOT NULL,
+	`provider` text(255) NOT NULL,
+	`provider_account_id` text(255) NOT NULL,
+	`refresh_token` text,
+	`access_token` text,
+	`expires_at` integer,
+	`token_type` text(255),
+	`scope` text(255),
+	`id_token` text,
+	`session_state` text(255),
+	PRIMARY KEY(`provider`, `provider_account_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `good-lyft_role` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer,
+	`user_id` integer,
+	`name` text,
+	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `good-lyft_session` (
+	`session_token` text(255) PRIMARY KEY NOT NULL,
+	`userId` text(255) NOT NULL,
+	`expires` integer NOT NULL,
+	FOREIGN KEY (`userId`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `good-lyft_user` (
+	`id` text(255) PRIMARY KEY NOT NULL,
 	`name` text,
 	`clerk_id` text,
-	`birth_date` text,
+	`birth_date` integer,
 	`gender` text,
 	`address` text,
 	`notes` text,
@@ -158,9 +207,19 @@ CREATE TABLE `good-lyft_user` (
 	`open_lifter` text,
 	`phone` text,
 	`email` text,
+	`email_verified` integer DEFAULT (unixepoch()),
+	`image` text,
 	`is_fake` integer,
+	`is_root` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
+);
+--> statement-breakpoint
+CREATE TABLE `good-lyft_verification_token` (
+	`identifier` text(255) NOT NULL,
+	`token` text(255) NOT NULL,
+	`expires` integer NOT NULL,
+	PRIMARY KEY(`identifier`, `token`)
 );
 --> statement-breakpoint
 CREATE INDEX `competition_state_id_idx` ON `good-lyft_competition` (`competition_state_id`);--> statement-breakpoint
@@ -179,5 +238,9 @@ CREATE INDEX `event_competition_id_idx` ON `good-lyft_event` (`competition_id`);
 CREATE INDEX `lift_competitionid_idx` ON `good-lyft_lift` (`competition_id`);--> statement-breakpoint
 CREATE INDEX `lift_entryid_idx` ON `good-lyft_lift` (`entry_id`);--> statement-breakpoint
 CREATE INDEX `lift_user_id_idx` ON `good-lyft_lift` (`user_id`);--> statement-breakpoint
+CREATE INDEX `notification_competitionid_idx` ON `good-lyft_notification` (`competition_id`);--> statement-breakpoint
+CREATE INDEX `notification_user_id_idx` ON `good-lyft_notification` (`user_id`);--> statement-breakpoint
+CREATE INDEX `account_user_id_idx` ON `good-lyft_account` (`user_id`);--> statement-breakpoint
+CREATE INDEX `session_userId_idx` ON `good-lyft_session` (`userId`);--> statement-breakpoint
 CREATE INDEX `name_idx` ON `good-lyft_user` (`name`);--> statement-breakpoint
 CREATE INDEX `clerk_id_idx` ON `good-lyft_user` (`clerk_id`);

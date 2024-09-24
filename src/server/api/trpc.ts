@@ -6,13 +6,12 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { TRPCError } from '@trpc/server'
 
-import { getAuth } from '@clerk/nextjs/server'
-
+import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 
 /**
@@ -27,10 +26,12 @@ import { db } from "@/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers, req: any }) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await getServerAuthSession();
+
   return {
     db,
-    auth: getAuth(opts.req),
+    session,
     ...opts,
   };
 };
@@ -100,32 +101,6 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
-const isAuthed = t.middleware( async ({ next, ctx }) => {
-  const start = Date.now();
-  if (!ctx.auth.userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-
-  // if (t._config.isDev) {
-  //   // artificial delay in dev
-  //   const waitMs = Math.floor(Math.random() * 400) + 100;
-  //   await new Promise((resolve) => setTimeout(resolve, waitMs));
-  // }
-
-  const result = await next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  })
-
-
-  const end = Date.now();
-  console.log(`[TRPC] ${ctx} took ${end - start}ms to execute`);
-
-  return result;
-})
-
-
 /**
  * Public (unauthenticated) procedure
  *
@@ -134,4 +109,26 @@ const isAuthed = t.middleware( async ({ next, ctx }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
-export const protectedProcedure = t.procedure.use(isAuthed);
+
+/**
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
+

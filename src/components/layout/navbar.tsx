@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ModeToggle } from '@/components/layout/mode-toggle'
-import { UserButton } from '@/components/layout/user-button'
 import { Cucumber } from '@/components/ui/cucumber'
 import { Database } from '@/components/ui/database'
 import { Button } from '@/components/ui/button'
@@ -18,8 +17,6 @@ export const Navbar = () => {
       toast.success('Synced')
     },
   })
-  const { data: isRoot, isLoading: isLoadingRoot } =
-    api.user.isUserRoot.useQuery()
 
   return (
     <div className='h-18 flex items-center justify-between px-2'>
@@ -32,7 +29,7 @@ export const Navbar = () => {
         />
       </div>
       <div className='flex items-center gap-4'>
-        {isRoot && !isLoadingRoot ? (
+        {true  ? (
           <div className='flex items-center gap-4'>
             <Button
               variant='ghost'
@@ -52,9 +49,6 @@ export const Navbar = () => {
         </Link>
 
         <ModeToggle />
-          <div className='w-8 flex items-center justify-center'>
-        <UserButton />
-        </div>
       </div>
     </div>
   )

@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1726123558018,
-      "tag": "0000_daffy_daredevil",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1726553244795,
-      "tag": "0001_sweet_shatterstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1726882636183,
-      "tag": "0002_rich_vulcan",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1726883478553,
-      "tag": "0003_harsh_robin_chapel",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1727061173838,
-      "tag": "0004_groovy_sprite",
+      "when": 1727165860013,
+      "tag": "0000_lucky_morgan_stark",
       "breakpoints": true
     }
   ]
