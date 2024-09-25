@@ -9,7 +9,6 @@ import { competition, competitionState } from '~/server/db/schema/competition'
 import { division } from '~/server/db/schema/division'
 import { event } from '~/server/db/schema/event'
 
-import { getCurrentUser } from './user'
 import { TRPCError } from '@trpc/server'
 import { getDateFromDate } from '~/lib/utils'
 
@@ -563,3 +562,11 @@ export const competitionRouter = createTRPCRouter({
       return true
     }),
 })
+
+const getCurrentUser = () => {
+  return {
+    id: '1',
+    name: 'J Smith',
+    email: 'jsmith@example.com',
+  }
+}

@@ -1,15 +1,14 @@
-import { z } from 'zod'
-import { currentUser } from '@clerk/nextjs/server'
-import { db } from '~/server/db'
-import { client } from '~/server/db'
-
 import { TRPCError } from '@trpc/server'
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
-import { user } from '~/server/db/schema/user'
-
-import { eq } from 'drizzle-orm'
-
 import { generateFullName, generateName } from '~/lib/names'
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc'
+import { client, db } from '~/server/db'
+import { user } from '~/server/db/schema/user'
+import { eq } from 'drizzle-orm'
+import { z } from 'zod'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -28,56 +27,30 @@ const createSchema = z.object({
 
 export const userRouter = createTRPCRouter({
   sync: publicProcedure.mutation(async ({ ctx }) => {
-    const cUser = await currentUser()
-    const isRoot = await isUserRoot(cUser?.id || '')
-    if (!isRoot) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are not authorized to access this resource.',
-      })
-    }
+    // const isRoot = await isUserRoot(cUser?.id || '')
+    // if (!isRoot) {
+    //   throw new TRPCError({
+    //     code: 'UNAUTHORIZED',
+    //     message: 'You are not authorized to access this resource.',
+    //   })
+    // }
 
     await client.sync()
     return true
   }),
-  getCurrentUser: publicProcedure.query(async ({ ctx }) => {
-    const cUser = await currentUser()
-    if (!cUser) {
-      return false
-    }
+  getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    console.log('ctx', ctx.session)
+    const ress = ctx.session?.user || ''
+    return ress
+
     const res = await ctx.db.query.user.findFirst({
       where: (user, { eq }) => eq(user.clerkId, cUser.id),
     })
-    if (!res) {
-      console.log('new user')
-      const newUser = await db
-        .insert(user)
-        .values({
-          clerkId: cUser.id,
-          name: cUser.fullName,
-          email: cUser.primaryEmailAddress?.emailAddress || '',
-        })
-        .returning({ id: user.id })
-      const id = newUser[0]?.id || 0
-      const newRes = await ctx.db.query.user.findFirst({
-        where: (users, { eq }) => eq(users.id, id),
-      })
-      return newRes
-    }
     return res
   }),
   updateRoot: publicProcedure
     .input(z.object({ id: z.number(), isRoot: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
-      const cUser = await currentUser()
-      const isRoot = await isUserRoot(cUser?.id || '')
-      if (!isRoot) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not authorized to access this resource.',
-        })
-      }
-
       const res = await ctx.db
         .update(user)
         .set({
@@ -88,27 +61,13 @@ export const userRouter = createTRPCRouter({
       return res
     }),
 
-  isUserRoot: publicProcedure.query(async ({ ctx }) => {
-
-    // const clerkId = 'user_2m8MFN14493ajBeHHWnLwkx88B1'
-    // const id = 10
-    // const res = await ctx.db.query.user.findFirst({
-    //   where: (users, { eq }) => eq(users.id, id),
-    // })
-    // return res?.isRoot
-
-    const cUser = await currentUser()
-    if (!cUser) {
-      return false
-    }
-    const res = await ctx.db.query.user.findFirst({
-      where: (users, { eq }) => eq(users.clerkId, cUser.id),
-    })
-    return res?.isRoot
-  }),
-
   createUser: publicProcedure
-    .input(createSchema)
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const res = await ctx.db.insert(user).values({
         ...input,
@@ -121,7 +80,10 @@ export const userRouter = createTRPCRouter({
       const name = generateFullName()
       return {
         name: name,
-        email: name.toLowerCase().replaceAll(' ', '') + Math.floor(Math.random() * 1000).toString() + '@warner.systems',
+        email:
+          name.toLowerCase().replaceAll(' ', '') +
+          Math.floor(Math.random() * 1000).toString() +
+          '@warner.systems',
         // generate a random birth date
         birthDate: new Date(
           Math.floor(Math.random() * 30) + 1980,
@@ -202,18 +164,3 @@ export const userRouter = createTRPCRouter({
     return res
   }),
 })
-
-export const getCurrentUser = async () => {
-  // const u = await currentUser()
-  const u = { id : 'user_2m8MFN14493ajBeHHWnLwkx88B1'}
-  return await db.query.user.findFirst({
-    where: (users, { eq }) => eq(users.clerkId, u?.id || ''),
-  })
-}
-
-export const isUserRoot = async (userId: string) => {
-  const res = await db.query.user.findFirst({
-    where: (users, { eq }) => eq(users.clerkId, userId),
-  })
-  return res?.isRoot
-}

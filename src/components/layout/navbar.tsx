@@ -18,6 +18,10 @@ export const Navbar = () => {
     },
   })
 
+  const { data: user } = api.user.getCurrentUser.useQuery()
+  console.log('user', user)
+
+
   return (
     <div className='h-18 flex items-center justify-between px-2'>
       <div className='flex items-center gap-4'>

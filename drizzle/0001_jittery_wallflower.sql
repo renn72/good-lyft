@@ -1,0 +1,1 @@
+ALTER TABLE `good-lyft_user` ADD `password` text;

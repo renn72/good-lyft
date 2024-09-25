@@ -7,6 +7,7 @@ import {
   verificationToken,
 } from '@/server/db/schema/user'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
+import { compare } from 'bcryptjs'
 import {
   getServerSession,
   type DefaultSession,
@@ -42,14 +43,27 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: async ({ session, token }) => {
+      console.log('session callback', session)
+      console.log('user callback', user)
+      // @ts-ignore
+      if (session.user) session.user.id = token.uid
+      return {
+        ...session,
+      }
+    },
+    jwt: async ({ user, token }) => {
+      console.log('jwt callback', token)
+      console.log('user callback', user)
+      if (user) {
+        token.uid = user.id
+      }
+      return token
+    },
   },
   adapter: DrizzleAdapter(db, {
     usersTable: user,
@@ -71,11 +85,17 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        const user = { id: '1', name: 'J Smith', email: 'jsmith@example.com' }
+        console.log('credentials', credentials)
+        console.log('req', req)
+        if (!credentials) return null
+        const user = await db.query.user.findFirst({
+          where: (user, { eq }) => eq(user.email, credentials.username),
+        })
+        console.log('user', user)
 
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
-          return user
+          return { id: user.id, email: user.email, name: user.name }
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null
@@ -96,6 +116,26 @@ export const authOptions: NextAuthOptions = {
   ],
 }
 
+function authorize(prisma: PrismaClient) {
+  return async (
+    credentials: Record<'email' | 'password', string> | undefined,
+  ) => {
+    if (!credentials) throw new Error('Missing credentials')
+    if (!credentials.email)
+      throw new Error('"email" is required in credentials')
+    if (!credentials.password)
+      throw new Error('"password" is required in credentials')
+    const maybeUser = await prisma.user.findFirst({
+      where: { email: credentials.email },
+      select: { id: true, email: true, password: true },
+    })
+    if (!maybeUser?.password) return null
+    // verify the input password with stored hash
+    const isValid = await compare(credentials.password, maybeUser.password)
+    if (!isValid) return null
+    return { id: maybeUser.id, email: maybeUser.email }
+  }
+}
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
  *

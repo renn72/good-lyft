@@ -8,8 +8,15 @@ import { user } from '~/server/db/schema/user'
 import { lift } from '~/server/db/schema/lift'
 import { entry, entryToDivision, entryToEvent } from '~/server/db/schema/entry'
 
-import { getCurrentUser } from './user'
 import { TRPCError } from '@trpc/server'
+
+const getCurrentUser = () => {
+  return {
+    id: '1',
+    name: 'J Smith',
+    email: 'jsmith@example.com',
+  }
+}
 
 const createSchema = z.object({
   address: z.string(),
