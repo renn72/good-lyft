@@ -86,19 +86,21 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
         console.log('credentials', credentials)
-        console.log('req', req)
         if (!credentials) return null
-        const user = await db.query.user.findFirst({
+        const maybeUser = await db.query.user.findFirst({
           where: (user, { eq }) => eq(user.email, credentials.username),
         })
-        console.log('user', user)
 
-        if (user) {
+        if (!maybeUser) throw new Error('user not found')
+        if (!maybeUser.password) throw new Error('invalid password')
+
+        const isValid =  await compare(credentials.password, maybeUser.password)
+        if (maybeUser && isValid) {
           // Any object returned will be saved in `user` property of the JWT
-          return { id: user.id, email: user.email, name: user.name }
+          return { id: maybeUser.id, email: maybeUser.email, firstName: maybeUser.firstName, lastName: maybeUser.lastName }
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
-          return null
+          throw new Error('invalid password')
 
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }

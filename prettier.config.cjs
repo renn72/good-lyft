@@ -9,6 +9,8 @@ const config = {
 	bracketSpacing: true,
 	plugins: [require.resolve("prettier-plugin-tailwindcss"), require.resolve("@ianvs/prettier-plugin-sort-imports")],
 	importOrder: [
+		"^@/trpc/(.*)$",
+		"",
 		"^react$",
 		"",
 		"^next$",

@@ -10,6 +10,7 @@ import { user } from '~/server/db/schema/user'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { getServerAuthSession } from '@/server/auth'
+import { hash } from 'bcryptjs'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -54,32 +55,26 @@ export const userRouter = createTRPCRouter({
     const session = await getServerAuthSession()
     return session?.user || false
   }),
-  updateRoot: publicProcedure
-    .input(z.object({ id: z.number(), isRoot: z.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .update(user)
-        .set({
-          isRoot: input.isRoot,
-        })
-        .where(eq(user.id, input.id))
-
-      return res
-    }),
-
   createUser: publicProcedure
     .input(
       z.object({
         email: z.string().email(),
         password: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        birthDate: z.date().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const hashedPassword = await hash(input.password, 10)
       const res = await ctx.db.insert(user).values({
         ...input,
+        name: input.firstName + ' ' + input.lastName,
+        password: hashedPassword,
       })
 
-      return res
+
+      return { user: input.email, password: input.password }
     }),
   generateFakeUsers: publicProcedure.mutation(async ({ ctx }) => {
     const fakeUsers = [...Array(9).keys()].map(() => {

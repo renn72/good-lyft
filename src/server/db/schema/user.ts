@@ -23,6 +23,8 @@ export const user = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: text('name'),
+    firstName: text('first_name'),
+    lastName: text('last_name'),
     clerkId: text('clerk_id'),
     birthDate: int('birth_date', { mode: 'timestamp' }),
     gender: text('gender'),
@@ -31,7 +33,7 @@ export const user = createTable(
     instagram: text('instagram'),
     openLifter: text('open_lifter'),
     phone: text('phone'),
-    email: text('email'),
+    email: text('email').unique(),
     emailVerified: int('email_verified', {
       mode: 'timestamp',
     }).default(sql`(unixepoch())`),

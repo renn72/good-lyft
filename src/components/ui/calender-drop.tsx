@@ -31,14 +31,14 @@ function CalendarDrop({
         month: 'space-y-4',
         caption: 'flex justify-center pt-1 relative items-center',
         caption_label: 'text-sm font-medium',
-        caption_dropdowns: 'flex justify-center gap-1',
+        caption_dropdowns: 'grid justify-center gap-3 grid-cols-2',
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
           buttonVariants({ variant: 'outline' }),
           'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
         ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
+        nav_button_previous: 'absolute left-0 top-0',
+        nav_button_next: 'absolute right-0 top-0',
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:

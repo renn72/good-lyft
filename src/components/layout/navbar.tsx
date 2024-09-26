@@ -11,7 +11,7 @@ import { Cucumber } from '@/components/ui/cucumber'
 import { Database } from '@/components/ui/database'
 
 import { Logout } from '@/components/auth/logout'
-import { LogIn } from '@/components/auth/login'
+import { SignInUp } from '@/components/auth/sign-in-up'
 import { ModeToggle } from '@/components/layout/mode-toggle'
 
 export const Navbar = () => {
@@ -54,7 +54,7 @@ export const Navbar = () => {
         </Link>
 
         <ModeToggle />
-        <LogIn />
+        <SignInUp />
         <Logout />
       </div>
     </div>
