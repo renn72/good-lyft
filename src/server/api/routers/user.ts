@@ -9,6 +9,7 @@ import { client, db } from '~/server/db'
 import { user } from '~/server/db/schema/user'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { getServerAuthSession } from '@/server/auth'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -40,13 +41,18 @@ export const userRouter = createTRPCRouter({
   }),
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     console.log('ctx', ctx.session)
-    const ress = ctx.session?.user || ''
-    return ress
+    const userId = ctx.session?.user.id
+
+    if (!userId) return null
 
     const res = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.clerkId, cUser.id),
+      where: (user, { eq }) => eq(user.id, userId),
     })
     return res
+  }),
+  isUser: publicProcedure.query(async () => {
+    const session = await getServerAuthSession()
+    return session?.user || false
   }),
   updateRoot: publicProcedure
     .input(z.object({ id: z.number(), isRoot: z.boolean() }))

@@ -1,13 +1,18 @@
 'use client'
-import Link from 'next/link'
+
 import Image from 'next/image'
-import { ModeToggle } from '@/components/layout/mode-toggle'
-import { Cucumber } from '@/components/ui/cucumber'
-import { Database } from '@/components/ui/database'
-import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
+import Link from 'next/link'
 
 import { api } from '@/trpc/react'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
+import { Cucumber } from '@/components/ui/cucumber'
+import { Database } from '@/components/ui/database'
+
+import { Logout } from '@/components/auth/logout'
+import { LogIn } from '@/components/auth/login'
+import { ModeToggle } from '@/components/layout/mode-toggle'
 
 export const Navbar = () => {
   const ctx = api.useUtils()
@@ -17,10 +22,6 @@ export const Navbar = () => {
       toast.success('Synced')
     },
   })
-
-  const { data: user } = api.user.getCurrentUser.useQuery()
-  console.log('user', user)
-
 
   return (
     <div className='h-18 flex items-center justify-between px-2'>
@@ -33,7 +34,7 @@ export const Navbar = () => {
         />
       </div>
       <div className='flex items-center gap-4'>
-        {true  ? (
+        {true ? (
           <div className='flex items-center gap-4'>
             <Button
               variant='ghost'
@@ -53,6 +54,8 @@ export const Navbar = () => {
         </Link>
 
         <ModeToggle />
+        <LogIn />
+        <Logout />
       </div>
     </div>
   )
