@@ -39,15 +39,7 @@ const isUserRoot = async (userId: string) => {
 }
 
 export const userRouter = createTRPCRouter({
-  sync: publicProcedure.mutation(async ({ ctx }) => {
-    // const isRoot = await isUserRoot(cUser?.id || '')
-    // if (!isRoot) {
-    //   throw new TRPCError({
-    //     code: 'UNAUTHORIZED',
-    //     message: 'You are not authorized to access this resource.',
-    //   })
-    // }
-
+  sync: rootProtectedProcedure.mutation(async () => {
     await client.sync()
     return true
   }),
@@ -168,7 +160,7 @@ export const userRouter = createTRPCRouter({
 
     return true
   }),
-  deleteUser: publicProcedure
+  deleteUser: rootProtectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const res = await ctx.db
@@ -177,24 +169,21 @@ export const userRouter = createTRPCRouter({
         .returning({ clerkId: user.clerkId })
       return res
     }),
-  getFakeUsers: publicProcedure.query(async ({ ctx }) => {
+  getFakeUsers: rootProtectedProcedure.query(async () => {
     const res = await db.query.user.findMany({
       where: (users, { eq }) => eq(users.isFake, true),
     })
     return res
   }),
-  getAllUsers: publicProcedure.query(async ({ ctx }) => {
+  getAllUsers: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany()
     return res
   }),
-  deleteFakeUsers: publicProcedure.mutation(async ({ ctx }) => {
+  deleteFakeUsers: rootProtectedProcedure.mutation(async () => {
     const res = await db
       .delete(user)
       .where(eq(user.isFake, true))
       .returning({ clerkId: user.clerkId })
-    for (const u of res) {
-      if (u.clerkId) await clerkClient.users.deleteUser(u.clerkId)
-    }
     return res
   }),
 })
