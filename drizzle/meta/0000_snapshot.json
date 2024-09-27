@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "32c9b350-bda6-4c35-b4a1-671a23e9847c",
+  "id": "cdd667d3-6eeb-4a24-a165-f9916d16e6f5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "good-lyft_competition": {
@@ -43,9 +43,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "owner_id": {
-          "name": "owner_id",
-          "type": "integer",
+        "creator_id": {
+          "name": "creator_id",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -227,10 +227,10 @@
           ],
           "isUnique": false
         },
-        "competition_owner_id_idx": {
-          "name": "competition_owner_id_idx",
+        "competition_creator_id_idx": {
+          "name": "competition_creator_id_idx",
           "columns": [
-            "owner_id"
+            "creator_id"
           ],
           "isUnique": false
         }
@@ -249,12 +249,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "good-lyft_competition_owner_id_good-lyft_user_id_fk": {
-          "name": "good-lyft_competition_owner_id_good-lyft_user_id_fk",
+        "good-lyft_competition_creator_id_good-lyft_user_id_fk": {
+          "name": "good-lyft_competition_creator_id_good-lyft_user_id_fk",
           "tableFrom": "good-lyft_competition",
           "tableTo": "good-lyft_user",
           "columnsFrom": [
-            "owner_id"
+            "creator_id"
           ],
           "columnsTo": [
             "id"
@@ -395,7 +395,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -563,7 +563,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1001,7 +1001,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1199,7 +1199,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1437,7 +1437,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1646,6 +1646,14 @@
         },
         "is_root": {
           "name": "is_root",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "is_creator": {
+          "name": "is_creator",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,

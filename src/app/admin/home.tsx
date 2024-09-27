@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, Scale, Gavel, Trophy } from 'lucide-react'
 import { toast } from 'sonner'
-import CompInfo from './_components/comp-info'
+import { CompInfo } from './_components/comp-info'
 import { useSearchParams } from 'next/navigation'
 import { api } from '~/trpc/react'
 import { Button } from '@/components/ui/button'

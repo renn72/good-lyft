@@ -22,18 +22,15 @@ export const CompSelect = () => {
   const competitions = context.competition.getAllMyCompetitions.getData()
 
   useEffect(() => {
-    console.log('effect')
     if (!competitionId || competitionId === 'null') {
-      console.log('no id')
       if (competitions && competitions?.length > 0 && competitions[0]?.prettyId) {
-        console.log('competitions')
         competitionId = competitions[0]?.prettyId
         router.push(`${pathname}?comp=${competitions[0]?.prettyId}&tab=home`)
       }
     }
   }, [])
 
-  // if (competitionId == 'null') return null
+  if (competitions?.length === 0) return null
 
   return (
     <Select

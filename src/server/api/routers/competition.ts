@@ -1,9 +1,7 @@
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 
-import { client } from '~/server/db'
-
-import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, publicProcedure, protectedProcedure, rootProtectedProcedure } from '~/server/api/trpc'
 
 import { competition, competitionState } from '~/server/db/schema/competition'
 import { division } from '~/server/db/schema/division'
@@ -23,7 +21,7 @@ const createSchema = z.object({
   state: z.string().optional(),
   city: z.string().optional(),
   date: z.date(),
-  ownerId: z.number().optional(),
+  creatorId: z.string().optional(),
   daysOfComp: z.number().nonnegative().int().min(1),
   platforms: z.number().nonnegative().int().min(1),
   rules: z.string().optional(),
@@ -88,17 +86,10 @@ export const competitionRouter = createTRPCRouter({
     })
     return res
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(createSchema)
     .mutation(async ({ ctx, input }) => {
-      const user = await getCurrentUser()
-      if (!user) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not authorized to access this resource.',
-        })
-      }
-      input.ownerId = user.id
+      input.creatorId = ctx.session?.user.id
       console.log('input', input)
 
       let comp_id =
@@ -219,13 +210,7 @@ export const competitionRouter = createTRPCRouter({
   updateDaysOfCompetition: publicProcedure
     .input(updateDaysOfCompetitionSchema)
     .mutation(async ({ ctx, input }) => {
-      const user = await getCurrentUser()
-      if (!user) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not authorized to access this resource.',
-        })
-      }
+
 
       const res = await ctx.db
         .update(competition)
@@ -269,19 +254,11 @@ export const competitionRouter = createTRPCRouter({
     })
     return res
   }),
-  getAllMyCompetitions: publicProcedure.query(async ({ ctx }) => {
-    const user = await getCurrentUser()
-    if (!user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are not authorized to access this resource.',
-      })
-    }
-
-    // REMOVE THIS
+  getAllMyCompetitions: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user.id
 
     const res = await ctx.db.query.competition.findMany({
-      where: (competitions, { eq }) => eq(competitions.ownerId, user.id),
+      where: (competitions, { eq }) => eq(competitions.creatorId, userId),
       orderBy: (competitions, { desc }) => [desc(competitions.createdAt)],
       with: {
         divisions: true,

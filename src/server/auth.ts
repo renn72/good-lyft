@@ -28,6 +28,7 @@ declare module 'next-auth' {
       id: string
       name: string
       email: string
+      isCreator: boolean
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -56,12 +57,14 @@ export const authOptions: NextAuthOptions = {
           where: (user, { eq }) => eq(user.id, token.uid),
           columns: {
             id: true,
+            isCreator: true,
           },
         })
         if (dbUser) {
           session.user = {
             ...session.user,
             id: dbUser.id,
+            isCreator: dbUser.isCreator || false,
           }
         }
       }
@@ -91,7 +94,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        console.log('credentials', credentials)
         if (!credentials) return null
         const maybeUser = await db.query.user.findFirst({
           where: (user, { eq }) => eq(user.email, credentials.username),
@@ -107,6 +109,7 @@ export const authOptions: NextAuthOptions = {
             id: maybeUser.id,
             email: maybeUser.email,
             name: maybeUser.firstName + ' ' + maybeUser.lastName,
+            isCreator: maybeUser.isCreator,
           }
         } else {
           throw new Error('invalid password')

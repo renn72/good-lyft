@@ -19,7 +19,7 @@ export const competition = createTable('competition', {
     mode: 'number',
   }).references(() => competitionState.id),
   prettyId: text('pretty_id').notNull(),
-  ownerId: int('owner_id', { mode: 'number' }).references(() => user.id),
+  creatorId: text('creator_id', ).references(() => user.id),
   name: text('name'),
   city: text('city'),
   state: text('state'),
@@ -48,7 +48,7 @@ export const competition = createTable('competition', {
 },
   (c) => ({
     competitionStateIdIndex: index('competition_state_id_idx').on(c.competitionStateId),
-    ownerIdIndex: index('competition_owner_id_idx').on(c.ownerId),
+    creatorIdIndex: index('competition_creator_id_idx').on(c.creatorId),
   }),
 )
 
@@ -66,7 +66,7 @@ export const judge = createTable('judge', {
       onDelete: 'cascade',
     },
   ),
-  userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+  userId: text('user_id', ).references(() => user.id, {
     onDelete: 'cascade',
   }),
   role: text('role'),
@@ -102,8 +102,8 @@ export const competitionState = createTable('competition_state', {
 export const competitionRelations = relations(competition, ({ one, many }) => ({
   entries: many(entry),
   divisions: many(division),
-  owner: one(user, {
-    fields: [competition.ownerId],
+  creator: one(user, {
+    fields: [competition.creatorId],
     references: [user.id],
   }),
   judges: many(judge),

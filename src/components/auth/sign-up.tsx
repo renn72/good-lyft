@@ -10,6 +10,7 @@ import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { CalendarDrop } from '@/components/ui/calender-drop'
 import {
@@ -41,6 +42,7 @@ const signInSchema = z.object({
   birthDate: z.date().optional().nullable(),
   email: z.string({ required_error: 'Email is required' }).email(),
   password: z.string({ required_error: 'Password is required' }).min(6),
+  isCreator: z.boolean(),
 })
 
 const SignUp = ({
@@ -59,6 +61,7 @@ const SignUp = ({
       firstName: '',
       lastName: '',
       birthDate: null,
+      isCreator: false,
     },
   })
 
@@ -91,7 +94,7 @@ const SignUp = ({
           })}
           className='flex w-full max-w-2xl flex-col gap-2'
         >
-          <div className='flex w-full flex-col gap-8'>
+          <div className='flex w-full flex-col gap-6'>
             <div className='flex w-full gap-2'>
               <FormField
                 control={form.control}
@@ -215,6 +218,25 @@ const SignUp = ({
                       placeholder='password'
                       type='password'
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='isCreator'
+              render={({ field }) => (
+                <FormItem className='w-full flex gap-4 items-end h-6 space-y-0'>
+                  <FormLabel>Do you want to create events?</FormLabel>
+                  <FormControl>
+                    <Checkbox
+                      className='h-4'
+                      checked={field.value}
+                      onCheckedChange={(value) => {
+                        field.onChange(value)
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

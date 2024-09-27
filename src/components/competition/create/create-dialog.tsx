@@ -1,21 +1,30 @@
 'use client'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, } from 'react-hook-form'
-import { z } from 'zod'
+
+import { api } from '@/trpc/react'
+
 import { useState } from 'react'
 
-import { api } from '~/trpc/react'
+import { useRouter } from 'next/navigation'
 
-import { Icons } from '@/components/ui/icons'
-import { CalendarIcon, PlusCircle, XCircle } from 'lucide-react'
-import { cn } from '~/lib/utils'
-import { Calendar } from '~/components/ui/calendar'
-
+import {
+  ageDivisionsData,
+  equipmentData,
+  eventsData,
+  wcFData,
+  wcMData,
+  winnerFormular,
+} from '@/lib/store'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
+import { CalendarIcon, PlusCircle, XCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { Card, CardContent, CardHeader } from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
-import { Button } from '~/components/ui/button'
+import { z } from 'zod'
+
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -23,33 +32,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
+} from '@/components/ui/form'
+import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '~/components/ui/popover'
-import { Textarea } from '~/components/ui/textarea'
-import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-import {
-  ageDivisionsData,
-  eventsData,
-  wcFData,
-  wcMData,
-  equipmentData,
-  winnerFormular,
-} from '~/lib/store'
-
-import { WC_Field } from '~/components/competition/create/components/wc-field'
+import { WC_Field } from '@/components/competition/create/components/wc-field'
 
 export const dynamic = 'force-dynamic'
 
@@ -87,8 +88,8 @@ export const formSchema = z.object({
 })
 
 export const CreateCompetition = () => {
-  const [ buttonText, setButtonText ] = useState('Create')
-  const [ isSubmitting, setIsSubmitting ] = useState(false)
+  const [buttonText, setButtonText] = useState('Create')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const context = api.useUtils()
   const router = useRouter()
 
@@ -115,8 +116,6 @@ export const CreateCompetition = () => {
       toast.error('Error Creating Competition')
     },
   })
-
-  const { data: user } = api.user.getCurrentUser.useQuery()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -684,7 +683,9 @@ export const CreateCompetition = () => {
             type='submit'
           >
             {buttonText}
-            { isSubmitting && <Icons.spinner className='animate-spin h-5 w-5 text-white' /> }
+            {isSubmitting && (
+              <Icons.spinner className='animate-spin h-5 w-5 text-white' />
+            )}
           </Button>
         </form>
       </Form>

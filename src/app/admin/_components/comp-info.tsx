@@ -222,4 +222,4 @@ const CompInfo = ({
   )
 }
 
-export default CompInfo
+export { CompInfo }

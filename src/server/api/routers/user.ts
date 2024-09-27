@@ -39,12 +39,15 @@ const isUserRoot = async (userId: string) => {
 }
 
 export const userRouter = createTRPCRouter({
-  sync: rootProtectedProcedure.mutation(async () => {
+  sync: protectedProcedure.mutation(async () => {
+    await client.sync()
+    return true
+  }),
+  unprotectedSync: publicProcedure.mutation(async () => {
     await client.sync()
     return true
   }),
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
-    console.log('ctx', ctx.session)
     const userId = ctx.session?.user.id
 
     if (!userId) return null
@@ -59,7 +62,6 @@ export const userRouter = createTRPCRouter({
   }),
   isUser: publicProcedure.query(async () => {
     const session = await getServerAuthSession()
-    console.log('session user db', session?.user)
     if (!session?.user) return null
     if (!session?.user?.id) return null
     return session.user
@@ -97,6 +99,7 @@ export const userRouter = createTRPCRouter({
         firstName: z.string(),
         lastName: z.string(),
         birthDate: z.date().optional().nullable(),
+        isCreator: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -112,7 +115,7 @@ export const userRouter = createTRPCRouter({
   generateFakeUsers: rootProtectedProcedure.mutation(async () => {
     const fakeUsers = [...Array(9).keys()].map(() => {
       const name = generateFullName()
-      const pwd = generateFullName()
+      const pwd = generateFullName().replaceAll(' ', '')
       return {
         name: name,
         firstName: name.split(' ')[0],

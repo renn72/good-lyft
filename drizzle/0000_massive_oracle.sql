@@ -4,7 +4,7 @@ CREATE TABLE `good-lyft_competition` (
 	`updated_at` integer,
 	`competition_state_id` integer,
 	`pretty_id` text NOT NULL,
-	`owner_id` integer,
+	`creator_id` text,
 	`name` text,
 	`city` text,
 	`state` text,
@@ -30,7 +30,7 @@ CREATE TABLE `good-lyft_competition` (
 	`is_require_phone` integer,
 	`notes` text,
 	FOREIGN KEY (`competition_state_id`) REFERENCES `good-lyft_competition_state`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`owner_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`creator_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `good-lyft_competition_state` (
@@ -52,7 +52,7 @@ CREATE TABLE `good-lyft_judge` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`competition_id` integer,
-	`user_id` integer,
+	`user_id` text,
 	`role` text,
 	FOREIGN KEY (`competition_id`) REFERENCES `good-lyft_competition`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE cascade
@@ -73,7 +73,7 @@ CREATE TABLE `good-lyft_entry` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
-	`user_id` integer,
+	`user_id` text,
 	`competition_id` integer,
 	`birth_date` integer,
 	`gender` text,
@@ -128,7 +128,7 @@ CREATE TABLE `good-lyft_lift` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`competition_id` integer,
 	`entry_id` integer,
-	`user_id` integer,
+	`user_id` text,
 	`lift_name` text,
 	`lift_number` integer,
 	`weight` text,
@@ -152,7 +152,7 @@ CREATE TABLE `good-lyft_notification` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`competition_id` integer,
-	`user_id` integer,
+	`user_id` text,
 	`title` text,
 	`description` text,
 	`is_read` integer,
@@ -183,7 +183,7 @@ CREATE TABLE `good-lyft_role` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
-	`user_id` integer,
+	`user_id` text,
 	`name` text,
 	FOREIGN KEY (`user_id`) REFERENCES `good-lyft_user`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -214,6 +214,7 @@ CREATE TABLE `good-lyft_user` (
 	`image` text,
 	`is_fake` integer DEFAULT false,
 	`is_root` integer DEFAULT false,
+	`is_creator` integer DEFAULT false,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
 );
@@ -226,7 +227,7 @@ CREATE TABLE `good-lyft_verification_token` (
 );
 --> statement-breakpoint
 CREATE INDEX `competition_state_id_idx` ON `good-lyft_competition` (`competition_state_id`);--> statement-breakpoint
-CREATE INDEX `competition_owner_id_idx` ON `good-lyft_competition` (`owner_id`);--> statement-breakpoint
+CREATE INDEX `competition_creator_id_idx` ON `good-lyft_competition` (`creator_id`);--> statement-breakpoint
 CREATE INDEX `competition_state_competition_id_idx` ON `good-lyft_competition_state` (`competition_id`);--> statement-breakpoint
 CREATE INDEX `judge_competition_id_idx` ON `good-lyft_judge` (`competition_id`);--> statement-breakpoint
 CREATE INDEX `judge_user_id_idx` ON `good-lyft_judge` (`user_id`);--> statement-breakpoint
