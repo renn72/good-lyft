@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 
 export const Logout = () => {
   const ctx = api.useUtils()
-  const { data: user } = api.user.isUser.useQuery()
   const onClick = async () => {
     try {
       await signOut()
@@ -20,7 +19,7 @@ export const Logout = () => {
     }
     ctx.user.isUser.refetch()
   }
-  if (!user) return null
+
   return (
     <Button
       variant='outline'

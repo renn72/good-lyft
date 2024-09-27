@@ -1,18 +1,18 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { api } from '@/trpc/react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Cucumber } from '@/components/ui/cucumber'
 import { Database } from '@/components/ui/database'
 
-import { Logout } from '@/components/auth/logout'
-import { SignInUp } from '@/components/auth/sign-in-up'
 import { ModeToggle } from '@/components/layout/mode-toggle'
+import { User } from '@/components/auth/user'
 
 export const Navbar = () => {
   const ctx = api.useUtils()
@@ -22,6 +22,7 @@ export const Navbar = () => {
       toast.success('Synced')
     },
   })
+  const { data: _isUser, isLoading: isLoadingUser } = api.user.isUser.useQuery()
 
   return (
     <div className='h-18 flex items-center justify-between px-2'>
@@ -33,30 +34,31 @@ export const Navbar = () => {
           height={50.78}
         />
       </div>
-      <div className='flex items-center gap-4'>
-        {true ? (
-          <div className='flex items-center gap-4'>
-            <Button
-              variant='ghost'
-              onClick={() => {
-                sync()
-              }}
-            >
-              <Database className='h-8 w-8 text-secondary' />
-            </Button>
-            <Link href='/super-admin'>
-              <Cucumber className='h-8 w-8 text-secondary' />
-            </Link>
-          </div>
-        ) : null}
-        <Link href='/admin'>
-          <Button variant='outline'>Admin</Button>
-        </Link>
+      {isLoadingUser ? null : (
+        <div className='flex items-center gap-4'>
+          {true ? (
+            <div className='flex items-center gap-4'>
+              <Button
+                variant='ghost'
+                onClick={() => {
+                  sync()
+                }}
+              >
+                <Database className='h-8 w-8 text-secondary' />
+              </Button>
+              <Link href='/super-admin'>
+                <Cucumber className='h-8 w-8 text-secondary' />
+              </Link>
+            </div>
+          ) : null}
+          <Link href='/admin'>
+            <Button variant='outline'>Admin</Button>
+          </Link>
 
-        <ModeToggle />
-        <SignInUp />
-        <Logout />
-      </div>
+          <ModeToggle />
+          <User />
+        </div>
+      )}
     </div>
   )
 }

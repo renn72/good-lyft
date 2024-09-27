@@ -53,7 +53,7 @@ export const userRouter = createTRPCRouter({
   }),
   isUser: publicProcedure.query(async () => {
     const session = await getServerAuthSession()
-    return session?.user || false
+    return session?.user || null
   }),
   createUser: publicProcedure
     .input(
