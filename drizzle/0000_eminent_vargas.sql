@@ -198,6 +198,8 @@ CREATE TABLE `good-lyft_session` (
 CREATE TABLE `good-lyft_user` (
 	`id` text(255) PRIMARY KEY NOT NULL,
 	`name` text,
+	`first_name` text,
+	`last_name` text,
 	`clerk_id` text,
 	`birth_date` integer,
 	`gender` text,
@@ -207,10 +209,11 @@ CREATE TABLE `good-lyft_user` (
 	`open_lifter` text,
 	`phone` text,
 	`email` text,
-	`email_verified` integer DEFAULT (unixepoch()),
+	`email_verified` integer,
+	`password` text,
 	`image` text,
-	`is_fake` integer,
-	`is_root` integer,
+	`is_fake` integer DEFAULT false,
+	`is_root` integer DEFAULT false,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
 );
@@ -242,5 +245,7 @@ CREATE INDEX `notification_competitionid_idx` ON `good-lyft_notification` (`comp
 CREATE INDEX `notification_user_id_idx` ON `good-lyft_notification` (`user_id`);--> statement-breakpoint
 CREATE INDEX `account_user_id_idx` ON `good-lyft_account` (`user_id`);--> statement-breakpoint
 CREATE INDEX `session_userId_idx` ON `good-lyft_session` (`userId`);--> statement-breakpoint
+CREATE UNIQUE INDEX `good-lyft_user_email_unique` ON `good-lyft_user` (`email`);--> statement-breakpoint
 CREATE INDEX `name_idx` ON `good-lyft_user` (`name`);--> statement-breakpoint
-CREATE INDEX `clerk_id_idx` ON `good-lyft_user` (`clerk_id`);
+CREATE INDEX `clerk_id_idx` ON `good-lyft_user` (`clerk_id`);--> statement-breakpoint
+CREATE INDEX `email_idx` ON `good-lyft_user` (`email`);

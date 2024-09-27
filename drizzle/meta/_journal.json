@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1727165860013,
-      "tag": "0000_lucky_morgan_stark",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1727248040989,
-      "tag": "0001_jittery_wallflower",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1727317685554,
-      "tag": "0002_robust_sentinels",
+      "when": 1727413420103,
+      "tag": "0000_eminent_vargas",
       "breakpoints": true
     }
   ]

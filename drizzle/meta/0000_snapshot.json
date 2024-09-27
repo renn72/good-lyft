@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2cc1e9af-2314-4f31-b93d-ec6edfeb7e57",
+  "id": "32c9b350-bda6-4c35-b4a1-671a23e9847c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "good-lyft_competition": {
@@ -1538,6 +1538,20 @@
           "notNull": false,
           "autoincrement": false
         },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "clerk_id": {
           "name": "clerk_id",
           "type": "text",
@@ -1606,8 +1620,14 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "(unixepoch())"
+          "autoincrement": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "image": {
           "name": "image",
@@ -1621,14 +1641,16 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": false
         },
         "is_root": {
           "name": "is_root",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -1647,6 +1669,13 @@
         }
       },
       "indexes": {
+        "good-lyft_user_email_unique": {
+          "name": "good-lyft_user_email_unique",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        },
         "name_idx": {
           "name": "name_idx",
           "columns": [
@@ -1658,6 +1687,13 @@
           "name": "clerk_id_idx",
           "columns": [
             "clerk_id"
+          ],
+          "isUnique": false
+        },
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            "email"
           ],
           "isUnique": false
         }

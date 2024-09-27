@@ -225,7 +225,7 @@ const SignUp = ({
               className='w-full'
               type='submit'
             >
-              Log in
+              Create Account
             </Button>
             <div className='text-sm text-muted-foreground w-full text-center'>
               Have an account?

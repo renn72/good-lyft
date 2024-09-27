@@ -39,8 +39,8 @@ export const user = createTable(
     }),
     password: text('password'),
     image: text('image'),
-    isFake: int('is_fake', { mode: 'boolean' }),
-    isRoot: int('is_root', { mode: 'boolean' }),
+    isFake: int('is_fake', { mode: 'boolean' }).default(false),
+    isRoot: int('is_root', { mode: 'boolean' }).default(false),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -51,6 +51,7 @@ export const user = createTable(
   (u) => ({
     nameIndex: index('name_idx').on(u.name),
     clerkIdIndex: index('clerk_id_idx').on(u.clerkId),
+    emailIndex: index('email_idx').on(u.email),
   }),
 )
 

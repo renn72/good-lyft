@@ -33,7 +33,7 @@ const isUserRoot = async (userId: string) => {
     where: (user, { eq }) => eq(user.id, userId),
     columns: {
       isRoot: true,
-    }
+    },
   })
   return res?.isRoot
 }
@@ -61,13 +61,16 @@ export const userRouter = createTRPCRouter({
       where: (user, { eq }) => eq(user.id, userId),
       columns: {
         password: false,
-      }
+      },
     })
     return res
   }),
   isUser: publicProcedure.query(async () => {
     const session = await getServerAuthSession()
-    return session?.user || null
+    console.log('session user db', session?.user)
+    if (!session?.user) return null
+    if (!session?.user?.id) return null
+    return session.user
   }),
   isRoot: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user.id
@@ -78,7 +81,7 @@ export const userRouter = createTRPCRouter({
       where: (user, { eq }) => eq(user.id, userId),
       columns: {
         isRoot: true,
-      }
+      },
     })
     return res
   }),
@@ -114,11 +117,14 @@ export const userRouter = createTRPCRouter({
 
       return { user: input.email, password: input.password }
     }),
-  generateFakeUsers: publicProcedure.mutation(async ({ ctx }) => {
+  generateFakeUsers: rootProtectedProcedure.mutation(async () => {
     const fakeUsers = [...Array(9).keys()].map(() => {
       const name = generateFullName()
+      const pwd = generateFullName()
       return {
         name: name,
+        firstName: name.split(' ')[0],
+        lastName: name.split(' ')[1],
         email:
           name.toLowerCase().replaceAll(' ', '') +
           Math.floor(Math.random() * 1000).toString() +
@@ -129,6 +135,7 @@ export const userRouter = createTRPCRouter({
           Math.floor(Math.random() * 12),
           Math.floor(Math.random() * 26),
         ),
+        password: pwd,
         isFake: true,
         address: `${Math.floor(Math.random() * 100)} ${generateName()} St`,
         // generate a random phone number
@@ -147,6 +154,9 @@ export const userRouter = createTRPCRouter({
         .values({
           email: fUser.email,
           name: fUser.name,
+          firstName: fUser.firstName,
+          lastName: fUser.lastName,
+          password: fUser.password,
           birthDate: fUser.birthDate,
           address: fUser.address,
           phone: fUser.phone,
@@ -159,13 +169,12 @@ export const userRouter = createTRPCRouter({
     return true
   }),
   deleteUser: publicProcedure
-    .input(z.number())
+    .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const res = await ctx.db
         .delete(user)
         .where(eq(user.id, input))
         .returning({ clerkId: user.clerkId })
-      if (res[0]?.clerkId) await clerkClient.users.deleteUser(res[0]?.clerkId)
       return res
     }),
   getFakeUsers: publicProcedure.query(async ({ ctx }) => {

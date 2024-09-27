@@ -49,12 +49,22 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    session: async ({ session, token, user }) => {
-      console.log('session', session)
-      console.log('token', token)
-      console.log('user', user)
-      // @ts-ignore
-      if (session.user) session.user.id = token.uid
+    session: async ({ session, token }) => {
+      if (session.user && token.uid) {
+        const dbUser = await db.query.user.findFirst({
+          // @ts-ignore
+          where: (user, { eq }) => eq(user.id, token.uid),
+          columns: {
+            id: true,
+          },
+        })
+        if (dbUser) {
+          session.user = {
+            ...session.user,
+            id: dbUser.id,
+          }
+        }
+      }
 
       return {
         ...session,
