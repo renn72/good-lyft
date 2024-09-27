@@ -36,7 +36,7 @@ export const user = createTable(
     email: text('email').unique(),
     emailVerified: int('email_verified', {
       mode: 'timestamp',
-    }).default(sql`(unixepoch())`),
+    }),
     password: text('password'),
     image: text('image'),
     isFake: int('is_fake', { mode: 'boolean' }),

@@ -1,16 +1,17 @@
+import { getServerAuthSession } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { generateFullName, generateName } from '~/lib/names'
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  rootProtectedProcedure,
 } from '~/server/api/trpc'
 import { client, db } from '~/server/db'
 import { user } from '~/server/db/schema/user'
+import { hash } from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { getServerAuthSession } from '@/server/auth'
-import { hash } from 'bcryptjs'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -26,6 +27,16 @@ const createSchema = z.object({
   notes: z.string().optional(),
   email: z.string().optional(),
 })
+
+const isUserRoot = async (userId: string) => {
+  const res = await db.query.user.findFirst({
+    where: (user, { eq }) => eq(user.id, userId),
+    columns: {
+      isRoot: true,
+    }
+  })
+  return res?.isRoot
+}
 
 export const userRouter = createTRPCRouter({
   sync: publicProcedure.mutation(async ({ ctx }) => {
@@ -48,6 +59,9 @@ export const userRouter = createTRPCRouter({
 
     const res = await ctx.db.query.user.findFirst({
       where: (user, { eq }) => eq(user.id, userId),
+      columns: {
+        password: false,
+      }
     })
     return res
   }),
@@ -55,6 +69,31 @@ export const userRouter = createTRPCRouter({
     const session = await getServerAuthSession()
     return session?.user || null
   }),
+  isRoot: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user.id
+
+    if (!userId) return null
+
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, userId),
+      columns: {
+        isRoot: true,
+      }
+    })
+    return res
+  }),
+  updateRoot: rootProtectedProcedure
+    .input(z.object({ isRoot: z.boolean(), id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(user)
+        .set({
+          isRoot: input.isRoot,
+        })
+        .where(eq(user.id, input.id))
+
+      return res
+    }),
   createUser: publicProcedure
     .input(
       z.object({
@@ -72,7 +111,6 @@ export const userRouter = createTRPCRouter({
         name: input.firstName + ' ' + input.lastName,
         password: hashedPassword,
       })
-
 
       return { user: input.email, password: input.password }
     }),
@@ -116,20 +154,6 @@ export const userRouter = createTRPCRouter({
           isFake: true,
         })
         .returning({ id: user.id })
-      const res = await clerkClient.users.createUser({
-        emailAddress: [fUser.email],
-        firstName: fUser.name.split(' ')[0] || '',
-        lastName: fUser.name.split(' ')[1] || '',
-        password: 'underground55412',
-      })
-      await ctx.db
-        .update(user)
-        .set({
-          clerkId: res.id,
-        })
-        .where(eq(user.id, u[0]?.id || 0))
-
-      console.log(res)
     }
 
     return true
