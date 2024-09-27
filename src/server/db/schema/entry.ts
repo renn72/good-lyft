@@ -18,7 +18,7 @@ export const entry = createTable(
     updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
       () => new Date(),
     ),
-    userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+    userId: text('user_id', ).references(() => user.id, {
       onDelete: 'cascade',
     }),
     competitionId: int('competition_id', { mode: 'number' }).references(

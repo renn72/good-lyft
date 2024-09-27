@@ -63,7 +63,7 @@ export const role = createTable('role', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  userId: int('user_id', { mode: 'number' }).references(() => user.id, {
+  userId: text('user_id').references(() => user.id, {
     onDelete: 'cascade',
   }),
   name: text('name'),
