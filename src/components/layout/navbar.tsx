@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Cucumber } from '@/components/ui/cucumber'
 import { Database } from '@/components/ui/database'
 
-import { ModeToggle } from '@/components/layout/mode-toggle'
 import { User } from '@/components/auth/user'
+import { ModeToggle } from '@/components/layout/mode-toggle'
 
 export const Navbar = () => {
   const ctx = api.useUtils()
@@ -27,12 +27,16 @@ export const Navbar = () => {
   return (
     <div className='h-18 flex items-center justify-between px-2'>
       <div className='flex items-center gap-4'>
-        <Image
-          src='/logo/logo-black.webp'
-          alt='logo'
-          width={100}
-          height={50.78}
-        />
+        <Link
+          className='hover:opacity-100 opacity-80 transition-all'
+          href='/'>
+          <Image
+            src='/logo/logo-black.webp'
+            alt='logo'
+            width={100}
+            height={50.78}
+          />
+        </Link>
       </div>
       {isLoadingUser ? null : (
         <div className='flex items-center gap-4'>
