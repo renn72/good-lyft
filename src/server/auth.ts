@@ -89,6 +89,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!maybeUser) throw new Error('user not found')
         if (!maybeUser.password) throw new Error('invalid password')
+        if (maybeUser.isFake) throw new Error('invalid credentials')
 
         const isValid = await compare(credentials.password, maybeUser.password)
         if (maybeUser && isValid) {

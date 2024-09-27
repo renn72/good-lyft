@@ -13,8 +13,6 @@ import { Users } from './users'
 import { Button } from '@/components/ui/button'
 
 export default function PowerliftingDashboard() {
-  const { data: currentUser } = api.user.getCurrentUser.useQuery()
-  console.log('currentUser', currentUser)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
