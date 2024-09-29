@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { eq, and } from 'drizzle-orm'
 
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, publicProcedure, protectedProcedure, rootProtectedProcedure } from '~/server/api/trpc'
 
 import { competition } from '~/server/db/schema/competition'
 import { user } from '~/server/db/schema/user'
@@ -10,13 +10,6 @@ import { entry, entryToDivision, entryToEvent } from '~/server/db/schema/entry'
 
 import { TRPCError } from '@trpc/server'
 
-const getCurrentUser = () => {
-  return {
-    id: '1',
-    name: 'J Smith',
-    email: 'jsmith@example.com',
-  }
-}
 
 const createSchema = z.object({
   address: z.string(),
@@ -41,7 +34,7 @@ const createSchema = z.object({
   compId: z.number(),
   team: z.string().optional(),
   teamLift: z.string().optional(),
-  userId: z.number().optional(),
+  userId: z.string().optional(),
 })
 
 const updateAndLockSchema = z.object({
@@ -68,7 +61,7 @@ const updateAndLockSchema = z.object({
   teamLift: z.string().optional(),
   notes: z.string(),
   compId: z.number(),
-  userId: z.number().optional(),
+  userId: z.string().optional(),
 })
 
 const updateOrderSchema = z.object({
@@ -118,7 +111,7 @@ const createEntrySchema = z.object({
   predictedWeight: z.string().optional(),
   entryWeight: z.string().optional(),
   competitionId: z.number(),
-  userId: z.number().optional(),
+  userId: z.string().optional(),
 })
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
@@ -126,41 +119,32 @@ function isTuple<T>(array: T[]): array is [T, ...T[]] {
 }
 
 export const entryRouter = createTRPCRouter({
-  deleteAllEntries: publicProcedure
+  deleteAllEntries: protectedProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user.id
+      const comp = await ctx.db.query.competition.findFirst({
+        where: (competition, { eq }) => eq(competition.id, input),
+        columns: {
+          creatorId: true,
+        },
+      })
+      if (!comp) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Competition not found.',
+        })
+      }
+      if (comp.creatorId !== userId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Unauthorized.',
+        })
+      }
       const res = await ctx.db
         .delete(entry)
         .where(eq(entry.competitionId, input))
       return res
-    }),
-  deleteEntry: publicProcedure
-    .input(z.number())
-    .mutation(async ({ ctx, input }) => {
-      const user = await getCurrentUser()
-      if (!user) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not authorized to access this resource.',
-        })
-      }
-
-      const res = await ctx.db.delete(entry).where(eq(entry.id, input))
-
-      return res
-    }),
-  deleteEntryAndUser: publicProcedure
-    .input(z.object({ userId: z.number(), entryId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const deletedUser = await ctx.db
-        .delete(user)
-        .where(eq(user.id, input.userId))
-
-      // const res = await ctx.db
-      //   .delete(entry)
-      //   .where(eq(entry.id, input.entryId))
-
-      return deletedUser
     }),
   createEntry: publicProcedure
     .input(createEntrySchema)
@@ -490,16 +474,9 @@ export const entryRouter = createTRPCRouter({
   //     }
   //     return true
   //   }),
-  getMyCompEntries: publicProcedure.query(async ({ ctx }) => {
-    const user = await getCurrentUser()
-    if (!user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are not authorized to access this resource.',
-      })
-    }
+  getMyCompEntries: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.entry.findMany({
-      where: (compEntry, { eq }) => eq(compEntry.userId, user.id),
+      where: (compEntry, { eq }) => eq(compEntry.userId, ctx.session?.user.id),
       orderBy: (compEntry, { desc }) => [desc(compEntry.createdAt)],
       with: {
         competition: true,
@@ -518,7 +495,7 @@ export const entryRouter = createTRPCRouter({
     })
     return res
   }),
-  get: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.entry.findFirst({
       where: (compEntry, { eq }) => eq(compEntry.id, input),
       with: {
@@ -545,16 +522,9 @@ export const entryRouter = createTRPCRouter({
     }
     return res
   }),
-  updateField: publicProcedure
+  updateField: protectedProcedure
     .input(z.object({ id: z.number(), field: z.string(), value: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const user = await getCurrentUser()
-      if (!user) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not authorized to access this resource.',
-        })
-      }
 
       const res = await ctx.db
         .update(entry)
