@@ -31,8 +31,6 @@ export const AddFakeUsers = ({
     },
   })
 
-  console.log('fakeUsers', fakeUsers)
-
   const createFake = () => {
     console.log('createFake')
     if (!fakeUsers) {
@@ -61,7 +59,8 @@ export const AddFakeUsers = ({
       }
 
       mutate({
-        name: user.name || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         birthDate: user.birthDate || new Date(),
         address: user.address || '',
         phone: user.phone || '',

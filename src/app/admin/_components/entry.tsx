@@ -1,9 +1,7 @@
 'use client'
 
-import { getAge } from '~/lib/utils'
-import { cn } from '~/lib/utils'
-
 import type { GetCompetitionEntryById } from '~/lib/types'
+import { cn, getAge } from '~/lib/utils'
 import { CircleCheck, CircleDot } from 'lucide-react'
 
 import { DeleteEntryButton } from './delete-entry'
@@ -80,7 +78,7 @@ export const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
   return (
     <div
       className={cn(
-        'grid grid-flow-row grid-cols-12 justify-between rounded-full',
+        'grid grid-flow-row grid-cols-12 justify-between rounded-full cursor-pointer',
         'relative border border-input px-4 py-1 hover:bg-input hover:bg-opacity-10',
       )}
     >
@@ -121,6 +119,6 @@ export const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
         )}
       />
       <DeleteEntryButton entry={entry} />
-    </div>
+    </div >
   )
 }
