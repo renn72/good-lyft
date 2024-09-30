@@ -1,27 +1,30 @@
 'use client'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+
 import { useEffect } from 'react'
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+
+import { api } from '~/trpc/react'
 import {
   Bell,
-  Home,
-  Users,
-  Scale,
-  Gavel,
-  Trophy,
-  Monitor,
   Calendar,
+  Gavel,
+  Home,
+  Monitor,
+  Scale,
   Settings,
+  Trophy,
+  Users,
 } from 'lucide-react'
 
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { api } from '~/trpc/react'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { CompSelect } from './comp-select'
-import { HomeTab } from './home'
 import { Competitors } from './competitiors'
+import { HomeTab } from './home'
+import { WeighIn } from './weigh-in'
 
 export const dynamic = 'force-dynamic'
 
@@ -170,7 +173,7 @@ export default function PowerliftingDashboard() {
               value={'weigh-in'}
               className='mt-0'
             >
-              <h2 className='mb-4 text-2xl font-bold'>Weigh-in</h2>
+              <WeighIn competition={selectedCompetition} />
             </TabsContent>
             <TabsContent
               value={'judges'}

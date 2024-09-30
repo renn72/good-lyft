@@ -1,9 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { api } from '@/trpc/react'
 
+import type { GetCompetitionById, GetCompetitionEntryById } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '~/components/ui/button'
+import { format } from 'date-fns'
+import { CalendarIcon, XIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { Button } from '@/components/ui/button'
+import { CalendarDrop } from '@/components/ui/calender-drop'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -19,32 +28,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverClose,
   PopoverContent,
   PopoverTrigger,
-} from '~/components/ui/popover'
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
-import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
-import type { GetCompetitionById, GetCompetitionEntryById } from '~/lib/types'
-import { cn } from '~/lib/utils'
-import { api } from '~/trpc/react'
-import { format } from 'date-fns'
-import { CalendarIcon, XIcon } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-
-import { CalendarDrop } from '@/components/ui/calender-drop'
+} from '@/components/ui/select'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
@@ -139,9 +138,7 @@ const EntryForm = ({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>New Entry</DialogTitle>

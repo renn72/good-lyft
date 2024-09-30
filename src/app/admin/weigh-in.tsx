@@ -1,29 +1,22 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { api } from '~/trpc/react'
 
-import { WeighInForm } from './_components/weigh-in-form'
-import { WeighInEntry } from './_components/weigh-in-entry'
-import FakeUser from './_components/fake-user'
-import WeightClasses from './_components/weight-classes'
+import { useState } from 'react'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select'
+import { GetCompetitionById } from '@/lib/types'
+
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '~/components/ui/sheet'
-import { GetCompetitionById } from '@/lib/types'
+} from '@/components/ui/sheet'
+
+import { WeighInEntry } from './_components/weigh-in-entry'
+import { FakeUser } from './_components/weigh-in-fake-user'
+import { WeighInForm } from './_components/weigh-in-form'
+import { WeightClasses } from './_components/weigh-in-weight-classes'
 
 const WeighIn = ({ competition }: { competition: GetCompetitionById }) => {
-  const [compId, setCompId] = useState('')
   const [entryId, setEntryId] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -71,4 +64,4 @@ const WeighIn = ({ competition }: { competition: GetCompetitionById }) => {
   )
 }
 
-export default WeighIn
+export { WeighIn }
