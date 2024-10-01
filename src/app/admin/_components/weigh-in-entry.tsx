@@ -1,23 +1,31 @@
 'use client'
-import { SheetTrigger } from '~/components/ui/sheet'
 
-import { getAge } from '~/lib/utils'
-import { cn } from '~/lib/utils'
+import type { GetCompetitionEntryById } from '@/lib/types'
+import { cn, getAge } from '@/lib/utils'
+import { CircleCheck, CircleDot, CircleOff, Minus } from 'lucide-react'
 
-import type { GetCompetitionEntryById } from '~/lib/types'
-import { CircleCheck, CircleDot, CircleOff, Minus, TicketCheck } from 'lucide-react'
-import { Badge } from '~/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
+import { SheetTrigger } from '@/components/ui/sheet'
 
-const EmptyCell = ({title, className}: {title: string, className?: string}) => {
+const EmptyCell = ({
+  title,
+  className,
+}: {
+  title: string
+  className?: string
+}) => {
   return (
     <div className={cn('flex flex-col items-center gap-0', className)}>
       <div className='text-xs text-muted-foreground'>{title}</div>
-      <div
-        className={cn(
-          'text-center text-lg font-medium text-muted',
+      <div className={cn('text-center text-lg font-medium text-muted')}>
+        {title === '' ? (
+          ''
+        ) : (
+          <CircleOff
+            size={20}
+            className='mt-1'
+          />
         )}
-      >
-        {title === '' ? '' : <CircleOff size={20} className='mt-1' />}
       </div>
     </div>
   )
@@ -42,7 +50,12 @@ const Cell = ({
           title === 'Weight' && 'text-xl',
         )}
       >
-        {info || <Minus size={24} className='mt-1' />}
+        {info || (
+          <Minus
+            size={24}
+            className='mt-1'
+          />
+        )}
       </div>
     </div>
   )
@@ -111,23 +124,22 @@ const CellArray = ({
   )
 }
 
-
-export const WeighInEntry = ({
+const WeighInEntry = ({
   entry,
   setEntryId,
 }: {
   entry: GetCompetitionEntryById
   setEntryId: (id: number) => void
 }) => {
-  const isSquat = entry.events.reduce((a, c) => {
+  const isSquat = entry.entryToEvents.reduce((a, c) => {
     if (c.event?.isSquat) return true
     return a
   }, false)
-  const isBench = entry.events.reduce((a, c) => {
+  const isBench = entry.entryToEvents.reduce((a, c) => {
     if (c.event?.isBench) return true
     return a
   }, false)
-  const isDeadlift = entry.events.reduce((a, c) => {
+  const isDeadlift = entry.entryToEvents.reduce((a, c) => {
     if (c.event?.isDeadlift) return true
     return a
   }, false)
@@ -137,8 +149,8 @@ export const WeighInEntry = ({
       <div
         onClick={() => setEntryId(entry.id)}
         className={cn(
-          'grid-cols-17 grid cursor-pointer grid-flow-row justify-between rounded-full',
-          'relative border border-input px-8 py-2 hover:bg-input hover:bg-opacity-10',
+          'grid-cols-17 grid cursor-pointer grid-flow-row justify-between rounded-full bg-background',
+          'relative border border-input px-6 py-1 hover:bg-input hover:bg-opacity-10',
           entry.isLocked && 'border-4 bg-muted/50',
         )}
       >
@@ -164,7 +176,7 @@ export const WeighInEntry = ({
         />
         <Cell
           title='Weight'
-          info={entry.weight}
+          info={entry.entryWeight}
         />
         <CellBadge
           title='WC'
@@ -181,7 +193,7 @@ export const WeighInEntry = ({
         {isSquat ? (
           <Cell
             title='Squat Rack'
-            info={entry.squarRackHeight}
+            info={entry.squatRack}
           />
         ) : (
           <EmptyCell title='' />
@@ -197,7 +209,7 @@ export const WeighInEntry = ({
         {isBench ? (
           <Cell
             title='Bench Rack'
-            info={entry.benchRackHeight}
+            info={entry.benchRack}
           />
         ) : (
           <EmptyCell title='' />
@@ -213,12 +225,12 @@ export const WeighInEntry = ({
         <CellArray
           title='Events'
           className='col-span-4 tracking-tighter'
-          info={entry.events?.map((event) => event.event?.name || '')}
+          info={entry.entryToEvents?.map((event) => event.event?.name || '')}
         />
         <CellArray
           title='Divisions'
           className='col-span-2'
-          info={entry.compEntryToDivisions?.map(
+          info={entry.entryToDivisions?.map(
             (division) => division.division?.name || '',
           )}
         />
@@ -227,3 +239,4 @@ export const WeighInEntry = ({
   )
 }
 
+export { WeighInEntry }

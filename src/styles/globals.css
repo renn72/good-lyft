@@ -69,3 +69,7 @@
   grid-column: span 2 / span 2;
   text-align: center;
 }
+
+.grid-cols-17 {
+  grid-template-columns: repeat(17, minmax(0, 1fr));
+}
