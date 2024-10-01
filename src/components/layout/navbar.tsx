@@ -66,8 +66,13 @@ export const Navbar = () => {
           <Image
             src='/logo/logo-black.webp'
             alt='logo'
-            width={100}
+            width={90}
             height={50.78}
+            priority
+            style={{
+              width: '100%',
+              height: 'auto',
+            }}
           />
         </Link>
         <Button

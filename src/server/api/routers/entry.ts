@@ -1,15 +1,16 @@
-import { z } from 'zod'
-import { eq, and } from 'drizzle-orm'
-
-import { createTRPCRouter, publicProcedure, protectedProcedure, rootProtectedProcedure } from '~/server/api/trpc'
-
-import { competition } from '~/server/db/schema/competition'
-import { user } from '~/server/db/schema/user'
-import { lift } from '~/server/db/schema/lift'
-import { entry, entryToDivision, entryToEvent } from '~/server/db/schema/entry'
-
 import { TRPCError } from '@trpc/server'
-
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+  rootProtectedProcedure,
+} from '~/server/api/trpc'
+import { competition } from '~/server/db/schema/competition'
+import { entry, entryToDivision, entryToEvent } from '~/server/db/schema/entry'
+import { lift } from '~/server/db/schema/lift'
+import { user } from '~/server/db/schema/user'
+import { and, eq } from 'drizzle-orm'
+import { z } from 'zod'
 
 const createSchema = z.object({
   address: z.string(),
@@ -144,6 +145,24 @@ export const entryRouter = createTRPCRouter({
       const res = await ctx.db
         .delete(entry)
         .where(eq(entry.competitionId, input))
+      return res
+    }),
+  deleteEntryAndUser: rootProtectedProcedure
+    .input(z.object({ userId: z.string(), entryId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db.batch([
+        ctx.db.delete(entry).where(eq(entry.id, input.entryId)),
+        ctx.db.delete(user).where(eq(user.id, input.userId)),
+      ])
+
+      return res
+    }),
+  deleteEntry: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .delete(entry)
+        .where(eq(entry.id, input))
       return res
     }),
   createEntry: publicProcedure
@@ -525,7 +544,6 @@ export const entryRouter = createTRPCRouter({
   updateField: protectedProcedure
     .input(z.object({ id: z.number(), field: z.string(), value: z.string() }))
     .mutation(async ({ ctx, input }) => {
-
       const res = await ctx.db
         .update(entry)
         .set({
