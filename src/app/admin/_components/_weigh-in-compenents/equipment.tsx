@@ -9,14 +9,14 @@ import {
 } from '~/components/ui/form'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import { Card, CardContent, CardTitle, CardHeader } from '~/components/ui/card'
-import type { GetCompetitionByUuid } from '~/lib/types'
+import type { GetCompetitionById } from '~/lib/types'
 
-const Equipment = ({ competition }: { competition: GetCompetitionByUuid }) => {
+const Equipment = ({ competition }: { competition: GetCompetitionById }) => {
   const form = useFormContext()
   const [selected, setSelected] = useState<string>()
   return (
     <Card className='w-full sm:max-w-2xl'>
-      <CardHeader>
+      <CardHeader className='pb-0'>
         <CardTitle>Equipment</CardTitle>
       </CardHeader>
       <CardContent className='mt-4 flex flex-col gap-2'>
@@ -45,7 +45,6 @@ const Equipment = ({ competition }: { competition: GetCompetitionByUuid }) => {
                           <FormItem key={item}>
                             <FormControl>
                               <ToggleGroupItem
-                                variant='secondary'
                                 className='rounded-md border border-input'
                                 value={item}
                                 onClick={(e) => {

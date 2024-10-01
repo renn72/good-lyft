@@ -1,11 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { api } from '~/trpc/react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '~/components/ui/button'
@@ -30,18 +29,18 @@ const formSchema = z.object({
   address: z.string(),
   phone: z.string(),
   instagram: z.string(),
-  openlifter: z.string(),
+  openLifter: z.string(),
   birthDate: z.date(),
   equipment: z.string(),
   gender: z.string(),
   predictedWeight: z.string(),
-  weight: z.string(),
+  entryWeight: z.string(),
   events: z.array(z.string()),
   division: z.array(z.string()),
   squatOpener: z.string(),
-  squarRackHeight: z.string(),
+  squatRack: z.string(),
   benchOpener: z.string(),
-  benchRackHeight: z.string(),
+  benchRack: z.string(),
   deadliftOpener: z.string(),
   squatPB: z.string(),
   benchPB: z.string(),
@@ -51,10 +50,9 @@ const formSchema = z.object({
   teamLift: z.string().optional(),
 })
 
-export const WeighInForm = ({
+const WeighInForm = ({
   entry,
   competition,
-  isOpen,
   setIsOpen,
 }: {
   entry: GetCompetitionEntryById | null
@@ -88,17 +86,17 @@ export const WeighInForm = ({
   })
 
   const isSquat =
-    entry?.events.reduce((a, c) => {
+    entry?.entryToEvents.reduce((a, c) => {
       if (c.event?.isSquat) return true
       return a
     }, false) || false
   const isBench =
-    entry?.events.reduce((a, c) => {
+    entry?.entryToEvents.reduce((a, c) => {
       if (c.event?.isBench) return true
       return a
     }, false) || false
   const isDeadlift =
-    entry?.events.reduce((a, c) => {
+    entry?.entryToEvents.reduce((a, c) => {
       if (c.event?.isDeadlift) return true
       return a
     }, false) || false
@@ -110,27 +108,25 @@ export const WeighInForm = ({
       phone: entry?.user && entry.user.phone ? entry.user.phone : '',
       instagram:
         entry?.user && entry.user.instagram ? entry.user.instagram : '',
-      openlifter:
-        entry?.user && entry.user.openlifter ? entry.user.openlifter : '',
+      openLifter:
+        entry?.user && entry.user.openLifter ? entry.user.openLifter : '',
       birthDate:
         entry?.user && entry.user.birthDate ? entry.user.birthDate : undefined,
       equipment: entry?.equipment ? entry.equipment : '',
       gender: entry?.gender ? entry.gender : '',
       predictedWeight: entry?.predictedWeight ? entry.predictedWeight : '',
-      weight: entry?.weight ? entry.weight : '',
-      events: entry?.events
-        ? entry.events.map((event) => event.event?.id.toString())
+      entryWeight: entry?.entryWeight ? entry.entryWeight : '',
+      events: entry?.entryToEvents
+        ? entry.entryToEvents.map((event) => event.event?.id.toString())
         : [],
       division:
-        entry?.compEntryToDivisions?.map((division) =>
+        entry?.entryToDivisions?.map((division) =>
           division.division?.id.toString(),
         ) || [],
-      team: entry?.team ? entry.team : '',
-      teamLift: entry?.teamLift ? entry.teamLift : '',
       squatOpener: entry?.squatOpener ? entry.squatOpener : '',
-      squarRackHeight: entry?.squarRackHeight ? entry.squarRackHeight : '',
+      squatRack: entry?.squatRack ? entry.squatRack : '',
       benchOpener: entry?.benchOpener ? entry.benchOpener : '',
-      benchRackHeight: entry?.benchRackHeight ? entry.benchRackHeight : '',
+      benchRack: entry?.benchRack ? entry.benchRack : '',
       deadliftOpener: entry?.deadliftOpener ? entry.deadliftOpener : '',
       squatPB: entry?.squatPB ? entry.squatPB : '',
       benchPB: entry?.benchPB ? entry.benchPB : '',
@@ -161,24 +157,24 @@ export const WeighInForm = ({
         phone: entry?.user && entry.user.phone ? entry.user.phone : '',
         instagram:
           entry?.user && entry.user.instagram ? entry.user.instagram : '',
-        openlifter:
-          entry?.user && entry.user.openlifter ? entry.user.openlifter : '',
+        openLifter:
+          entry?.user && entry.user.openLifter ? entry.user.openLifter : '',
         birthDate: entry.birthDate ? entry.birthDate : undefined,
         equipment: entry?.equipment ? entry.equipment : '',
         gender: entry?.gender ? entry.gender : '',
         predictedWeight: entry?.predictedWeight ? entry.predictedWeight : '',
-        weight: entry?.weight ? entry.weight : '',
-        events: entry.events
-          ? entry.events.map((event) => event.event?.id.toString())
+        entryWeight: entry?.entryWeight ? entry.entryWeight : '',
+        events: entry.entryToEvents
+          ? entry.entryToEvents.map((event) => event.event?.id.toString())
           : [],
         division:
-          entry?.compEntryToDivisions?.map((division) =>
+          entry?.entryToDivisions?.map((division) =>
             division.division?.id.toString(),
           ) || [],
         squatOpener: entry?.squatOpener ? entry.squatOpener : '',
-        squarRackHeight: entry?.squarRackHeight ? entry.squarRackHeight : '',
+        squatRack: entry?.squatRack ? entry.squatRack : '',
         benchOpener: entry?.benchOpener ? entry.benchOpener : '',
-        benchRackHeight: entry?.benchRackHeight ? entry.benchRackHeight : '',
+        benchRack: entry?.benchRack ? entry.benchRack : '',
         deadliftOpener: entry?.deadliftOpener ? entry.deadliftOpener : '',
         squatPB: entry?.squatPB ? entry.squatPB : '',
         benchPB: entry?.benchPB ? entry.benchPB : '',
@@ -238,3 +234,5 @@ export const WeighInForm = ({
   )
 }
 
+
+export { WeighInForm }

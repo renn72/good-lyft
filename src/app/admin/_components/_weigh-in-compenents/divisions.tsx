@@ -13,13 +13,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '~/components/ui/hover-card'
-import type { GetCompetitionByUuid } from '~/lib/types'
+import type { GetCompetitionById } from '~/lib/types'
 
-const Divisions = ({ competition }: { competition: GetCompetitionByUuid }) => {
+const Divisions = ({ competition }: { competition: GetCompetitionById }) => {
   const form = useFormContext()
   return (
     <Card className='w-full sm:max-w-2xl'>
-      <CardHeader>
+      <CardHeader className='pb-0'>
         <CardTitle>Divisions</CardTitle>
       </CardHeader>
       <CardContent className='mt-4 flex flex-col gap-2'>
@@ -55,16 +55,16 @@ const Divisions = ({ competition }: { competition: GetCompetitionByUuid }) => {
                           <FormItem key={item.id}>
                             <FormControl>
                               <ToggleGroupItem
-                                variant='secondary'
                                 className='w-full rounded-md border border-input tracking-tight'
                                 value={item.id.toString()}
                               >
                                 <div className='grid w-full grid-cols-6 gap-1 divide-x divide-muted'>
                                   <div className='col-span-1'>
-                                    {item.name.length > 12 ? (
+                                    {/* @ts-ignore */}
+                                    {item.name?.length > 12 ? (
                                       <HoverCard>
                                         <HoverCardTrigger>
-                                          {item.name.slice(0, 12) + '...'}
+                                          {item.name?.slice(0, 12) + '...'}
                                         </HoverCardTrigger>
                                         <HoverCardContent>
                                           {item.name}
@@ -77,17 +77,18 @@ const Divisions = ({ competition }: { competition: GetCompetitionByUuid }) => {
                                   <div>{item.minAge || '.'}</div>
                                   <div>{item.maxAge || '.'}</div>
                                   <div className='col-span-3'>
-                                    {item.info.length > 24 ? (
+                                    {/* @ts-ignore */}
+                                    {item.notes?.length > 24 ? (
                                       <HoverCard>
                                         <HoverCardTrigger>
-                                          {item.info.slice(0, 24) + '...'}
+                                          {item.notes?.slice(0, 24) + '...'}
                                         </HoverCardTrigger>
                                         <HoverCardContent>
-                                          {item.info}
+                                          {item.notes}
                                         </HoverCardContent>
                                       </HoverCard>
                                     ) : (
-                                      item.info
+                                      item.notes
                                     )}
                                   </div>
                                 </div>

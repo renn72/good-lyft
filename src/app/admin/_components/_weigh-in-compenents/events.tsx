@@ -8,13 +8,13 @@ import {
 } from '~/components/ui/form'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import { Card, CardContent, CardTitle, CardHeader } from '~/components/ui/card'
-import type { GetCompetitionByUuid } from '~/lib/types'
+import type { GetCompetitionById } from '~/lib/types'
 
-const Events = ({ competition }: { competition: GetCompetitionByUuid }) => {
+const Events = ({ competition }: { competition: GetCompetitionById }) => {
   const form = useFormContext()
   return (
     <Card className='w-full sm:max-w-2xl'>
-      <CardHeader>
+      <CardHeader className='pb-0'>
         <CardTitle>Events</CardTitle>
       </CardHeader>
       <CardContent className='mt-4 flex flex-col gap-2'>
@@ -42,7 +42,6 @@ const Events = ({ competition }: { competition: GetCompetitionByUuid }) => {
                           <FormItem key={item.id}>
                             <FormControl>
                               <ToggleGroupItem
-                                variant='secondary'
                                 className='rounded-md border border-input'
                                 value={item.id.toString()}
                               >
