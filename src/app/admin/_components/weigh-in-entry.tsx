@@ -41,11 +41,11 @@ const Cell = ({
   className?: string
 }) => {
   return (
-    <div className={cn('flex flex-col items-center gap-0', className)}>
+    <div className={cn('flex flex-col items-center justify-between', className)}>
       <div className='text-xs text-muted-foreground'>{title}</div>
       <div
         className={cn(
-          'text-center text-lg font-medium',
+          'text-center text-lg font-medium leading-tight',
           info ? 'text-primary' : 'text-warning',
           title === 'Weight' && 'text-xl',
         )}
@@ -53,7 +53,7 @@ const Cell = ({
         {info || (
           <Minus
             size={24}
-            className='mt-1'
+            className='text-destructive'
           />
         )}
       </div>
@@ -96,7 +96,7 @@ const CellArray = ({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-between gap-2',
+        'flex flex-col items-center justify-between gap-0',
         className,
       )}
     >
@@ -105,7 +105,7 @@ const CellArray = ({
         {info.map((item, i) => (
           <div
             className={cn(
-              'flex items-center gap-1 font-medium tracking-tight',
+              'flex items-center gap-1 font-medium',
               item ? 'text-primary' : 'text-secondary',
             )}
             key={item}
@@ -149,7 +149,7 @@ const WeighInEntry = ({
       <div
         onClick={() => setEntryId(entry.id)}
         className={cn(
-          'grid-cols-17 grid cursor-pointer grid-flow-row justify-between rounded-full bg-background',
+          'grid-cols-17 grid cursor-pointer grid-flow-row justify-between rounded-full bg-background leading-none',
           'relative border border-input px-6 py-1 hover:bg-input hover:bg-opacity-10',
           entry.isLocked && 'border-4 bg-muted/50',
         )}
@@ -224,7 +224,7 @@ const WeighInEntry = ({
         )}
         <CellArray
           title='Events'
-          className='col-span-4 tracking-tighter'
+          className='col-span-4'
           info={entry.entryToEvents?.map((event) => event.event?.name || '')}
         />
         <CellArray

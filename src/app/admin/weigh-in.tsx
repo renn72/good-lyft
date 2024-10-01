@@ -29,16 +29,16 @@ const WeighIn = ({ competition }: { competition: GetCompetitionById }) => {
 
   return (
     <Card className='w-full'>
-      <CardHeader className='mb-4'>
+      <CardHeader className='mb-0 pb-0 flex items-center justify-between flex-row'>
         <CardTitle className='text-2xl font-bold'>Weigh In</CardTitle>
+            {competition && <FakeUser competition={competition} />}
       </CardHeader>
-      <CardContent className='flex flex-col gap-4'>
+      <CardContent className='flex flex-col gap-2'>
         <Sheet
           open={isOpen}
           onOpenChange={setIsOpen}
         >
           <div className='flex items-center gap-4'>
-            {competition && <FakeUser competition={competition} />}
           </div>
           {competition && (
             <div className='mx-4 flex flex-col gap-2'>
