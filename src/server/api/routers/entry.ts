@@ -39,27 +39,21 @@ const createSchema = z.object({
 })
 
 const updateAndLockSchema = z.object({
-  name: z.string().optional(),
   id: z.number(),
   address: z.string(),
   phone: z.string(),
-  instagram: z.string(),
-  openlifter: z.string(),
   birthDate: z.date(),
   equipment: z.string(),
   gender: z.string(),
-  predictedWeight: z.string(),
-  weight: z.string(),
+  entryWeight: z.string(),
   squatOpener: z.string(),
-  squarRackHeight: z.string(),
+  squatRack: z.string(),
   benchOpener: z.string(),
-  benchRackHeight: z.string(),
+  benchRack: z.string(),
   deadliftOpener: z.string(),
   squatPB: z.string(),
   benchPB: z.string(),
   deadliftPB: z.string(),
-  team: z.string().optional(),
-  teamLift: z.string().optional(),
   notes: z.string(),
   compId: z.number(),
   userId: z.string().optional(),
@@ -252,168 +246,161 @@ export const entryRouter = createTRPCRouter({
 
       return true
     }),
-  // updateAndLock: publicProcedure
-  //   .input(updateAndLockSchema)
-  //   .mutation(async ({ ctx, input }) => {
-  //     const user = await getCurrentUser()
-  //     if (!user) {
-  //       throw new TRPCError({
-  //         code: 'UNAUTHORIZED',
-  //         message: 'You are not authorized to access this resource.',
-  //       })
-  //     }
-  //
-  //     const res = await ctx.db
-  //       .update(entry)
-  //       .set({
-  //         ...input,
-  //         isLocked: true,
-  //       })
-  //       .where(eq(entry.id, input.id))
-  //
-  //     await ctx.db
-  //       .delete(lift)
-  //       .where(and(eq(lift.compEntryId, input.id), eq(lift.liftNumber, 1)))
-  //
-  //     // build batch inserts and check if doing lift
-  //
-  //     const squat = [
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 1,
-  //         state: 'created',
-  //         lift: 'squat',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         rackHeight: input.squarRackHeight,
-  //         weight: input.squatOpener,
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 2,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         state: 'created',
-  //         lift: 'squat',
-  //         rackHeight: input.squarRackHeight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 3,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         state: 'created',
-  //         lift: 'squat',
-  //         rackHeight: input.squarRackHeight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //     ]
-  //
-  //     const bench = [
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 1,
-  //         state: 'created',
-  //         lift: 'bench',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         rackHeight: input.benchRackHeight,
-  //         weight: input.benchOpener,
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 2,
-  //         state: 'created',
-  //         lift: 'bench',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         rackHeight: input.benchRackHeight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 3,
-  //         state: 'created',
-  //         lift: 'bench',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         rackHeight: input.benchRackHeight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //     ]
-  //
-  //     const deadlift = [
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 1,
-  //         state: 'created',
-  //         lift: 'deadlift',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         weight: input.deadliftOpener,
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 2,
-  //         state: 'created',
-  //         lift: 'deadlift',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //       ctx.db.insert(lift).values({
-  //         compEntryId: input.id,
-  //         liftNumber: 3,
-  //         state: 'created',
-  //         lift: 'deadlift',
-  //         team: input.team,
-  //         teamLift: input.teamLift,
-  //         gender: input.gender,
-  //         userWeight: input.weight,
-  //         weight: '',
-  //         name: input.name,
-  //       }),
-  //     ]
-  //
-  //     if (isTuple(squat) && input.squatOpener !== '') {
-  //       await ctx.db.batch(squat)
-  //     }
-  //
-  //     if (isTuple(bench) && input.benchOpener !== '') {
-  //       await ctx.db.batch(bench)
-  //     }
-  //
-  //     if (isTuple(deadlift) && input.deadliftOpener !== '') {
-  //       await ctx.db.batch(deadlift)
-  //     }
-  //
-  //     return res
-  //   }),
+  updateAndLock: publicProcedure
+    .input(updateAndLockSchema)
+    .mutation(async ({ ctx, input }) => {
+
+      const res = await ctx.db
+        .update(entry)
+        .set({
+          ...input,
+          isLocked: true,
+        })
+        .where(eq(entry.id, input.id))
+
+      await ctx.db
+        .delete(lift)
+        .where(and(eq(lift.compEntryId, input.id), eq(lift.liftNumber, 1)))
+
+      // build batch inserts and check if doing lift
+
+      const squat = [
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 1,
+          state: 'created',
+          lift: 'squat',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          rackHeight: input.squarRackHeight,
+          weight: input.squatOpener,
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 2,
+          gender: input.gender,
+          userWeight: input.weight,
+          team: input.team,
+          teamLift: input.teamLift,
+          state: 'created',
+          lift: 'squat',
+          rackHeight: input.squarRackHeight,
+          weight: '',
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 3,
+          gender: input.gender,
+          userWeight: input.weight,
+          team: input.team,
+          teamLift: input.teamLift,
+          state: 'created',
+          lift: 'squat',
+          rackHeight: input.squarRackHeight,
+          weight: '',
+          name: input.name,
+        }),
+      ]
+
+      const bench = [
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 1,
+          state: 'created',
+          lift: 'bench',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          rackHeight: input.benchRackHeight,
+          weight: input.benchOpener,
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 2,
+          state: 'created',
+          lift: 'bench',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          rackHeight: input.benchRackHeight,
+          weight: '',
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 3,
+          state: 'created',
+          lift: 'bench',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          rackHeight: input.benchRackHeight,
+          weight: '',
+          name: input.name,
+        }),
+      ]
+
+      const deadlift = [
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 1,
+          state: 'created',
+          lift: 'deadlift',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          weight: input.deadliftOpener,
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 2,
+          state: 'created',
+          lift: 'deadlift',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          weight: '',
+          name: input.name,
+        }),
+        ctx.db.insert(lift).values({
+          compEntryId: input.id,
+          liftNumber: 3,
+          state: 'created',
+          lift: 'deadlift',
+          team: input.team,
+          teamLift: input.teamLift,
+          gender: input.gender,
+          userWeight: input.weight,
+          weight: '',
+          name: input.name,
+        }),
+      ]
+
+      if (isTuple(squat) && input.squatOpener !== '') {
+        await ctx.db.batch(squat)
+      }
+
+      if (isTuple(bench) && input.benchOpener !== '') {
+        await ctx.db.batch(bench)
+      }
+
+      if (isTuple(deadlift) && input.deadliftOpener !== '') {
+        await ctx.db.batch(deadlift)
+      }
+
+      return res
+    }),
   // updateOrder: publicProcedure
   //   .input(updateOrderSchema)
   //   .mutation(async ({ ctx, input }) => {

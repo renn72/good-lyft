@@ -10,7 +10,7 @@ const roundPL = (num: number) => {
 
 const FakeUser = ({ competition }: { competition: GetCompetitionById }) => {
   const ctx = api.useUtils()
-  const { mutate: updateAndLock } = api.compEntry.updateAndLock.useMutation({
+  const { mutate: updateAndLock } = api.entry.updateAndLock.useMutation({
     onSettled: () => {
     },
   })
@@ -65,7 +65,6 @@ const FakeUser = ({ competition }: { competition: GetCompetitionById }) => {
         birthDate: entry?.birthDate || new Date(),
         equipment: entry?.equipment || '',
         gender: entry?.gender || '',
-        predictedWeight: entry?.predictedWeight || '',
         entryWeight: entry?.entryWeight || '',
         squatOpener: entry.squatOpener || '',
         squatRack: entry.squatRack || '',
@@ -75,9 +74,8 @@ const FakeUser = ({ competition }: { competition: GetCompetitionById }) => {
         squatPB: '',
         benchPB: '',
         deadliftPB: '',
-        name: entry?.user?.name || '',
         compId: competition?.id || 0,
-        userId: entry.userId || 0,
+        userId: entry.userId || '',
         notes: entry?.notes || '',
       })
     }

@@ -118,7 +118,8 @@ export const Entry = ({ entry }: { entry: GetCompetitionEntryById }) => {
           (division) => division.division?.name || '',
         )}
       />
-      <DeleteEntryButton entry={entry} />
+      <DeleteEntryButton
+        entry={entry} />
     </div >
   )
 }
