@@ -1,11 +1,16 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Scale, Gavel, Trophy } from 'lucide-react'
-import { toast } from 'sonner'
-import { CompInfo } from './_components/comp-info'
+
+import { api } from '@/trpc/react'
+
 import { useSearchParams } from 'next/navigation'
-import { api } from '~/trpc/react'
+
+import { Scale, Trophy, Users } from 'lucide-react'
+import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+import { CompInfo } from './_components/comp-info'
 
 export const HomeTab = () => {
   const searchParams = useSearchParams()
